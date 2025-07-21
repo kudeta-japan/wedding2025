@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>引き出物カタログギフト申込みフォーム</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-4">
+  <div class="max-w-2xl mx-auto bg-white shadow rounded p-6 space-y-6" id="app">
+    <h1 class="text-2xl font-bold text-center">引き出物カタログ 申込みフォーム</h1>
+
+    <!-- 申し込みフォーム -->
+    <form id="entryForm" class="space-y-4">
+      <div>
+        <label class="block mb-1 font-semibold" for="guestName">お名前 <span class="text-red-500">*</span></label>
+        <input id="guestName" type="text" required placeholder="山田 太郎" class="w-full border rounded px-3 py-2"/>
+      </div>
+
+      <div>
+        <label class="block mb-1 font-semibold" for="giftSelect">ご希望のギフト <span class="text-red-500">*</span></label>
+        <select id="giftSelect" required class="w-full border rounded px-3 py-2"></select>
+      </div>
+
+      <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50" id="submitBtn">申し込む</button>
+    </form>
+
+    <!-- 在庫一覧 -->
+    <section>
+      <h2 class="text-xl font-semibold mb-2">残り在庫</h2>
+      <table class="w-full text-left border">
+        <thead class="bg-gray-200">
+          <tr><th class="p-2">ギフト</th><th class="p-2 w-24">残数</th></tr>
+        </thead>
+        <tbody id="stockBody"></tbody>
+      </table>
+    </section>
+
+    <!-- 受付済み通知 -->
+    <div id="notice" class="hidden p-4 text-center rounded bg-green-100 text-green-800"></div>
+  </div>
+
+  <!-- Firebase SDK (v10 modules) -->
+  <script type="module">
+    // ===== ① ここに Firebase 設定を貼り付けてください =====
+const firebaseConfig = {
+  apiKey: "AIzaSyAA-XGpkTYSttDq7Pm8FEPG1XF6ybbLBLI",
+  authDomain: "wedding2025-56e05.firebaseapp.com",
+  projectId: "wedding2025-56e05",
+  storageBucket: "wedding2025-56e05.firebasestorage.app",
+  messagingSenderId: "650015960238",
+  appId: "1:650015960238:web:f1d4403120b51f5bc4513f"
+};
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, getDoc, doc, runTransaction, onSnapshot, query } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const app = initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
+
+    // === ② カタログギフト定義: id, label, initialStock ===
+    const catalog = [
+      { id: "flower",      label: "フラワーギフト",            stock: 10 },
+      { id: "nihon",       label: "日本料理お取り寄せ",        stock: 10 },
+      { id: "wine",        label: "ワイン",                  stock: 12 },
+      { id: "golf",        label: "バーチャルゴルフ",        stock: 8  },
+      { id: "vision",      label: "経営理念コンサル",        stock: 5  },
+      { id: "lovehotel",   label: "ラブホ優待券",              stock: 20 },
+      { id: "massage",     label: "マッサージチケット",        stock: 15 },
+      { id: "dinner",      label: "ディナーコース",            stock: 15 },
+      { id: "personal",    label: "パーソナルトレーニング",    stock: 10 },
+      { id: "yakiniku",    label: "焼肉用お肉",                stock: 10 }
+    ];
+
+    // === ③ Firestore に初期在庫を投入（初回のみ手動で呼び出し） ===
+    async function seedStock() {
+      for (const item of catalog) {
+        await runTransaction(db, async (tx) => {
+          const ref = doc(db, "stock", item.id);
+          const snap = await tx.get(ref);
+          if (!snap.exists()) {
+            tx.set(ref, { label: item.label, remain: item.stock });
+          }
+        });
+      }
+    }
+    // seedStock(); // ←既に投入済みならコメントアウト ※一度だけ実行
+
+    // === ④ UI 初期化 ===
+    const giftSelect = document.getElementById("giftSelect");
+    const stockBody  = document.getElementById("stockBody");
+    const notice     = document.getElementById("notice");
+
+    // 在庫表示をリアルタイム更新
+    onSnapshot(query(collection(db, "stock")), (snap)=>{
+      stockBody.innerHTML = "";
+      giftSelect.innerHTML = "";
+      snap.forEach(docSnap=>{
+        const { label, remain } = docSnap.data();
+        // テーブル
+        stockBody.insertAdjacentHTML("beforeend", `<tr><td class="border px-2 py-1">${label}</td><td class="border px-2 py-1 text-center">${remain}</td></tr>`);
+        // セレクト
+        if(remain>0){
+          giftSelect.insertAdjacentHTML("beforeend", `<option value="${docSnap.id}">${label}</option>`);
+        }
+      });
+    });
+
+    // === ⑤ 申し込み処理 ===
+    document.getElementById("entryForm").addEventListener("submit", async (e)=>{
+      e.preventDefault();
+      const name  = document.getElementById("guestName").value.trim();
+      const giftId = giftSelect.value;
+      if(!name){ alert("お名前を入力してください"); return; }
+      if(!giftId){ alert("在庫切れのため選択できません"); return; }
+
+      try{
+        await runTransaction(db, async (tx)=>{
+          const stockRef = doc(db,"stock",giftId);
+          const stockSnap= await tx.get(stockRef);
+          const data = stockSnap.data();
+          if(!data || data.remain<=0) throw new Error("在庫切れです");
+          // 在庫を減らす
+          tx.update(stockRef,{remain: data.remain-1});
+          // 申し込み記録を作成 name を doc ID にする
+          const entryRef = doc(db,"entries",`${Date.now()}_${name}`);
+          tx.set(entryRef,{name, giftId, giftLabel:data.label, ts:Date.now()});
+        });
+        notice.textContent = "お申し込みありがとうございます！";
+        notice.classList.remove("hidden");
+        e.target.reset();
+      }catch(err){
+        alert(err.message);
+      }
+    });
+  </script>
+</body>
+</html>
