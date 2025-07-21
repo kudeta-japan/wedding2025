@@ -1,28 +1,33 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>引き出物カタログギフト申込みフォーム</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 p-4">
+  <!-- ========= 利用者ビュー ========= -->
   <div class="max-w-2xl mx-auto bg-white shadow rounded p-6 space-y-6" id="quizView">
     <h1 class="text-2xl font-bold text-center mb-4">引き出物カタログ 申込みフォーム</h1>
 
     <!-- 申し込みフォーム -->
     <form id="entryForm" class="space-y-4">
       <div>
-        <label class="block mb-1 font-semibold" for="guestName">お名前 <span class="text-red-500">*</span></label>
-        <input id="guestName" type="text" required placeholder="山田 太郎" class="w-full border rounded px-3 py-2"/>
+        <label class="block mb-1 font-semibold" for="guestId">ID (4桁) <span class="text-red-500">*</span></label>
+        <input id="guestId" type="text" pattern="\d{4}" maxlength="4" required placeholder="0001" class="w-full border rounded px-3 py-2" />
+        <p class="text-xs text-gray-500 mt-1">※お手元のカタログ台紙に印字されている 4 桁番号を入力してください</p>
       </div>
-
+      <div>
+        <label class="block mb-1 font-semibold" for="guestName">お名前 <span class="text-red-500">*</span></label>
+        <input id="guestName" type="text" required placeholder="山田 太郎" class="w-full border rounded px-3 py-2" />
+      </div>
       <div>
         <label class="block mb-1 font-semibold" for="giftSelect">ご希望のギフト <span class="text-red-500">*</span></label>
         <select id="giftSelect" required class="w-full border rounded px-3 py-2"></select>
       </div>
 
-      <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50" id="submitBtn">申し込む</button>
+      <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50" id="submitBtn">申し込む / 変更する</button>
     </form>
 
     <!-- 在庫一覧 -->
@@ -30,27 +35,27 @@
       <h2 class="text-xl font-semibold mb-2">残り在庫</h2>
       <table class="w-full text-left border">
         <thead class="bg-gray-200">
-          <tr><th class="p-2">ギフト</th><th class="p-2 w-24">残数</th></tr>
+          <tr><th class="p-2">ギフト</th><th class="p-2 w-24 text-center">残数</th></tr>
         </thead>
         <tbody id="stockBody"></tbody>
       </table>
     </section>
 
-    <!-- 受付済み通知 -->
+    <!-- 受付通知 -->
     <div id="notice" class="hidden p-4 text-center rounded bg-green-100 text-green-800"></div>
 
-    <!-- 管理ボタン -->
+    <!-- 管理ページリンク -->
     <div class="text-right">
       <button id="adminBtn" class="text-sm text-blue-600 underline">管理ページへ</button>
     </div>
   </div>
 
-  <!-- 管理ビュー -->
+  <!-- ========= 管理ビュー ========= -->
   <div class="max-w-3xl mx-auto bg-white shadow rounded p-6 space-y-6 hidden" id="adminView">
     <h2 class="text-2xl font-bold text-center">エントリー一覧（管理者用）</h2>
     <table class="w-full text-left border">
       <thead class="bg-gray-200">
-        <tr><th class="p-2">日時</th><th class="p-2">名前</th><th class="p-2">ギフト</th></tr>
+        <tr><th class="p-2">日時</th><th class="p-2">ID</th><th class="p-2">名前</th><th class="p-2">ギフト</th></tr>
       </thead>
       <tbody id="entryBody"></tbody>
     </table>
@@ -62,7 +67,6 @@
 
   <!-- Firebase SDK (v10 modules) -->
   <script type="module">
-    /* ===== Firebase 設定を貼り付け済み ===== */
     const firebaseConfig = {
       apiKey: "AIzaSyAA-XGpkTYSttDq7Pm8FEPG1XF6ybbLBLI",
       authDomain: "wedding2025-56e05.firebaseapp.com",
@@ -71,11 +75,10 @@
       messagingSenderId: "650015960238",
       appId: "1:650015960238:web:f1d4403120b51f5bc4513f"
     };
-
-    const ADMIN_PASS = "kudeta2025"; // ★必要に応じて変更
+    const ADMIN_PASS = "kudeta2025"; // 管理ページ用
 
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, getDoc, doc, runTransaction, onSnapshot, query, orderBy, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFirestore, collection, doc, getDoc, runTransaction, onSnapshot, query, orderBy, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const app = initializeApp(firebaseConfig);
     const db  = getFirestore(app);
@@ -87,26 +90,22 @@
       { id: "wine",        label: "ワイン",                  stock: 12 },
       { id: "golf",        label: "バーチャルゴルフ",        stock: 8  },
       { id: "vision",      label: "経営理念コンサル",        stock: 5  },
-      { id: "lovehotel",   label: "ラブホ優待券",              stock: 20 },
+      { id: "lovehotel",   label: "ラブホ優待券",            stock: 20 },
       { id: "massage",     label: "マッサージチケット",        stock: 15 },
       { id: "dinner",      label: "ディナーコース",            stock: 15 },
       { id: "personal",    label: "パーソナルトレーニング",    stock: 10 },
-      { id: "yakiniku",    label: "焼肉用お肉",                stock: 10 }
+      { id: "yakiniku",    label: "焼肉用お肉",              stock: 10 }
     ];
 
-    /* === 初期在庫投入（初回のみ）=== */
+    /* === 初期在庫を投入（初回だけコメント解除）=== */
     async function seedStock(){
       for(const item of catalog){
-        await runTransaction(db, async(tx)=>{
-          const ref = doc(db,"stock",item.id);
-          const snap= await tx.get(ref);
-          if(!snap.exists()) tx.set(ref,{label:item.label,remain:item.stock});
-        });
+        await setDoc(doc(db,"stock",item.id), {label:item.label, remain:item.stock}, {merge:true});
       }
     }
-    // seedStock(); // ←初回だけ実行してコメントアウト
+    // seedStock(); // ←最初に 1 回だけ実行して再コメント
 
-    /* === 画面要素 === */
+    /* === 要素 === */
     const giftSelect = document.getElementById("giftSelect");
     const stockBody  = document.getElementById("stockBody");
     const notice     = document.getElementById("notice");
@@ -125,64 +124,50 @@
       });
     });
 
-    /* === 申し込み処理 === */
+    /* === 申し込み / 変更処理 === */
     document.getElementById("entryForm").addEventListener("submit",async e=>{
       e.preventDefault();
-      const name  = document.getElementById("guestName").value.trim();
-      const giftId= giftSelect.value;
-      if(!name)  return alert("お名前を入力してください");
-      if(!giftId)return alert("在庫切れのため選択できません");
+      const id     = document.getElementById("guestId").value.trim();
+      const name   = document.getElementById("guestName").value.trim();
+      const giftId = giftSelect.value;
+      if(!/^[0-9]{4}$/.test(id))  return alert("ID は 4 桁の数字で入力してください");
+      if(!name)                  return alert("お名前を入力してください");
+      if(!giftId)                return alert("在庫切れのため選択できません");
+
       try{
-        await runTransaction(db,async tx=>{
-          const sRef = doc(db,"stock",giftId);
-          const sSnap= await tx.get(sRef);
-          const d    = sSnap.data();
-          if(!d || d.remain<=0) throw new Error("在庫切れです");
-          tx.update(sRef,{remain:d.remain-1});
-          const eRef = doc(collection(db,"entries"));
-          tx.set(eRef,{name,giftId,giftLabel:d.label,ts:Date.now()});
+        await runTransaction(db, async tx=>{
+          const entryRef = doc(db,"entries",id);
+          const entrySnap= await tx.get(entryRef);
+          let prevGiftId = null;
+          if(entrySnap.exists()){
+            // 既存エントリー → 在庫を戻す
+            prevGiftId = entrySnap.data().giftId;
+            if(prevGiftId){
+              const prevRef = doc(db,"stock",prevGiftId);
+              const prevSnap= await tx.get(prevRef);
+              if(prevSnap.exists()) tx.update(prevRef,{remain: prevSnap.data().remain + 1});
+            }
+          }
+
+          // 新しいギフトの在庫チェック
+          const stockRef = doc(db,"stock",giftId);
+          const stockSnap= await tx.get(stockRef);
+          const stockData= stockSnap.data();
+          if(!stockData || stockData.remain<=0) throw new Error("在庫切れです");
+
+          // 残数を減らす
+          tx.update(stockRef,{remain: stockData.remain - 1});
+
+          // エントリーを上書き / 新規作成
+          tx.set(entryRef,{id,name,giftId,giftLabel:stockData.label,ts:Date.now()});
         });
-        notice.textContent="お申し込みありがとうございます！";
+        notice.textContent = "お申し込みを受け付けました！(変更も反映済み)";
         notice.classList.remove("hidden");
         e.target.reset();
       }catch(err){alert(err.message)}
     });
 
     /* === 管理ページ === */
-    document.getElementById("adminBtn").onclick = ()=>{
+    document.getElementById("adminBtn").onclick = () => {
       const pass = prompt("管理者パスワードを入力");
-      if(pass!==ADMIN_PASS) return alert("パスワードが違います");
-      // エントリー取得
-      onSnapshot(query(collection(db,"entries"), orderBy("ts","desc")), snap=>{
-        entryBody.innerHTML="";
-        snap.forEach(d=>{
-          const {name,giftLabel,ts}=d.data();
-          const date = new Date(ts).toLocaleString("ja-JP");
-          entryBody.insertAdjacentHTML("beforeend",`<tr><td class="border px-2 py-1">${date}</td><td class="border px-2 py-1">${name}</td><td class="border px-2 py-1">${giftLabel}</td></tr>`);
-        });
-      });
-      quizView.classList.add("hidden");
-      adminView.classList.remove("hidden");
-    };
-
-    document.getElementById("backBtn").onclick = ()=>{
-      adminView.classList.add("hidden");
-      quizView.classList.remove("hidden");
-    };
-
-    /* === CSV 出力 === */
-    document.getElementById("csvBtn").onclick = ()=>{
-      let csv = "日時,名前,ギフト\n";
-      entryBody.querySelectorAll("tr").forEach(tr=>{
-        const cols=[...tr.children].map(td=>`"${td.textContent}"`).join(",");
-        csv += cols+"\n";
-      });
-      const blob = new Blob([csv],{type:"text/csv"});
-      const url  = URL.createObjectURL(blob);
-      const a    = document.createElement("a");
-      a.href = url; a.download = "entries.csv"; a.click();
-      URL.revokeObjectURL(url);
-    };
-  </script>
-</body>
-</html>
+      if(pass!==
