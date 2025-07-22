@@ -10,73 +10,110 @@
   <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/tabulator-tables@5.6.2/dist/js/tabulator.min.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tabulator-tables@5.6.2/dist/css/tabulator_simple.min.css"/>
-  <style>body{font-family:'Poppins',sans-serif;}</style>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    html {scroll-behavior:smooth;}
+    body {font-family:'Poppins',sans-serif;}
+    /* Hide number arrows */
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button{ -webkit-appearance:none; margin:0; }
+    /* Glassmorphism utilities */
+    .glass {
+      @apply bg-white/70 dark:bg-white/10 backdrop-blur-md ring-1 ring-white/30 dark:ring-white/10 shadow-xl rounded-2xl;
+    }
+  </style>
 </head>
-<body class="bg-gradient-to-br from-teal-50 to-cyan-100 min-h-screen flex flex-col">
+<body class="relative min-h-screen flex flex-col text-slate-800 dark:text-slate-200 bg-gradient-to-br from-rose-50 via-sky-50 to-teal-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-700 selection:bg-indigo-300/60 selection:text-indigo-900">
+  <!-- Animated Hero BG -->
+  <div class="pointer-events-none absolute inset-0 overflow-hidden">
+    <div class="absolute -top-48 -left-48 w-[60rem] h-[60rem] bg-gradient-to-br from-pink-400/40 via-indigo-400/40 to-sky-400/40 rounded-full blur-3xl opacity-60 animate-pulse" style="animation-duration:8s"></div>
+    <div class="absolute bottom-0 right-0 w-[50rem] h-[50rem] bg-gradient-to-tr from-teal-300/40 via-cyan-400/40 to-purple-400/40 rounded-full blur-3xl opacity-50 animate-pulse" style="animation-duration:10s"></div>
+  </div>
+
   <!-- Floating Admin Icon -->
-  <button id="adminBtn" class="fixed bottom-6 right-6 bg-indigo-600 text-white p-3 rounded-full shadow-lg hover:brightness-110">
+  <button id="adminBtn" class="fixed bottom-6 right-6 bg-indigo-600 hover:bg-indigo-700 text-white p-3 rounded-full shadow-lg ring-4 ring-indigo-300/30 transition focus:outline-none focus:ring-4">
     <i data-lucide="settings"></i>
   </button>
 
   <!-- Main Form View -->
-  <main id="formView" class="flex-grow flex items-center justify-center p-4">
-    <div class="w-full max-w-2xl bg-white/60 backdrop-blur rounded-2xl shadow-xl p-6 space-y-6">
-      <h1 class="text-2xl font-semibold text-center text-indigo-600">Wedding Gift Catalog</h1>
-      <form id="entryForm" class="space-y-4">
-        <div>
-          <label class="font-medium">ID (4桁) <span class="text-red-500">*</span></label>
-          <input id="guestId" type="text" pattern="\\d{4}" maxlength="4" required class="mt-1 w-full rounded border px-3 py-2" placeholder="0001" />
+  <main id="formView" class="flex-grow flex items-center justify-center p-6">
+    <div class="glass w-full max-w-3xl p-8 space-y-8">
+      <header class="text-center space-y-2">
+        <div class="inline-flex items-center justify-center w-14 h-14 bg-indigo-500 text-white rounded-full shadow-md">
+          <i data-lucide="gift" class="w-7 h-7"></i>
         </div>
-        <div>
-          <label class="font-medium">お名前 <span class="text-red-500">*</span></label>
-          <input id="guestName" type="text" required class="mt-1 w-full rounded border px-3 py-2" placeholder="山田 太郎" />
+        <h1 class="text-3xl font-semibold tracking-wide text-indigo-600 dark:text-indigo-400">Wedding Gift Catalog</h1>
+        <p class="text-sm text-slate-600 dark:text-slate-400">お好きなギフトをお選びください。ID とお名前は必須です。</p>
+      </header>
+
+      <form id="entryForm" class="space-y-6">
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label class="font-medium">ID (4桁) <span class="text-red-500">*</span></label>
+            <input id="guestId" type="text" pattern="\\d{4}" maxlength="4" required class="mt-1 w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white/80 dark:bg-slate-800/40 px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="0001" />
+          </div>
+          <div>
+            <label class="font-medium">お名前 <span class="text-red-500">*</span></label>
+            <input id="guestName" type="text" required class="mt-1 w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white/80 dark:bg-slate-800/40 px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="山田 太郎" />
+          </div>
         </div>
         <div>
           <label class="font-medium">ご希望ギフト <span class="text-red-500">*</span></label>
-          <select id="giftSelect" required class="mt-1 w-full rounded border px-3 py-2"></select>
+          <select id="giftSelect" required class="mt-1 w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white/80 dark:bg-slate-800/40 px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"></select>
         </div>
-        <button id="submitBtn" class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:brightness-110 disabled:opacity-50">申し込む</button>
+        <button id="submitBtn" class="group w-full relative overflow-hidden bg-indigo-600 dark:bg-indigo-500 py-3 rounded-lg font-medium text-white shadow-md transition-transform duration-150 hover:-translate-y-0.5 hover:shadow-lg disabled:opacity-50">
+          <span class="relative z-10">申し込む</span>
+          <span class="absolute inset-0 bg-white/10 group-hover:bg-white/20 transition-opacity"></span>
+        </button>
       </form>
-      <section>
-        <h2 class="text-xl font-semibold mb-2">残り在庫</h2>
-        <table class="w-full text-left border">
-          <thead class="bg-slate-200"><tr><th class="p-2">ギフト</th><th class="p-2 w-24">残数</th></tr></thead>
-          <tbody id="stockBody"></tbody>
-        </table>
+
+      <section class="space-y-2">
+        <div class="flex items-center gap-2">
+          <h2 class="text-xl font-semibold text-slate-700 dark:text-slate-200">残り在庫</h2>
+          <span id="stockBadge" class="hidden px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500 text-white"></span>
+        </div>
+        <div class="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm">
+          <table class="min-w-full text-left text-sm">
+            <thead class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+              <tr><th class="p-3">ギフト</th><th class="p-3 w-24">残数</th></tr></thead>
+            <tbody id="stockBody" class="divide-y divide-slate-100 dark:divide-slate-700"></tbody>
+          </table>
+        </div>
       </section>
-      <p id="notice" class="hidden text-center text-green-700 bg-green-100 rounded p-3"></p>
+
+      <p id="notice" class="hidden text-center text-green-800 dark:text-green-300 bg-green-100/70 dark:bg-green-900/20 rounded-lg p-3 font-medium"></p>
     </div>
   </main>
 
   <!-- Admin Modal -->
-  <div id="adminModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-50">
-    <div class="w-full max-w-4xl bg-white rounded-2xl shadow-xl p-6 flex flex-col gap-4">
+  <div id="adminModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+    <div class="glass w-full max-w-5xl p-8 flex flex-col gap-6 relative animate-fadeIn">
       <div class="flex items-center justify-between">
-        <h3 class="text-xl font-semibold">管理ダッシュボード</h3>
+        <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400 flex items-center gap-2"><i data-lucide="shield"></i> 管理ダッシュボード</h3>
         <div class="flex items-center gap-3">
-          <button id="refreshStockBtn" class="bg-amber-500 text-white px-3 py-1 rounded hover:brightness-110 flex items-center gap-1"><i data-lucide="rotate-ccw" class="w-4 h-4"></i>在庫更新</button>
-          <button id="editStockBtn" class="bg-emerald-600 text-white px-3 py-1 rounded hover:brightness-110 flex items-center gap-1"><i data-lucide="edit"></i>在庫編集</button>
-          <button id="downloadCsvBtn" class="bg-indigo-600 text-white px-3 py-1 rounded hover:brightness-110 flex items-center gap-1"><i data-lucide="download"></i>CSV</button>
-          <button id="closeAdmin" class="text-slate-600 hover:text-red-500"><i data-lucide="x" class="w-6 h-6"></i></button>
+          <button id="refreshStockBtn" class="flex items-center gap-1 bg-amber-500 hover:bg-amber-600 text-white px-3 py-2 rounded-lg text-sm shadow"><i data-lucide="rotate-ccw" class="w-4 h-4"></i>在庫更新</button>
+          <button id="editStockBtn" class="flex items-center gap-1 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg text-sm shadow"><i data-lucide="edit"></i>在庫編集</button>
+          <button id="downloadCsvBtn" class="flex items-center gap-1 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-lg text-sm shadow"><i data-lucide="download"></i>CSV</button>
+          <button id="closeAdmin" class="text-slate-500 hover:text-red-500 transition"><i data-lucide="x" class="w-6 h-6"></i></button>
         </div>
       </div>
-      <input id="searchInput" type="text" placeholder="Search..." class="border rounded px-3 py-2 w-48" />
+      <div class="flex items-center gap-3">
+        <input id="searchInput" type="text" placeholder="Search..." class="w-52 rounded-lg border border-slate-300 dark:border-slate-600 bg-white/80 dark:bg-slate-800/40 px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none text-sm" />
+        <span class="text-slate-400 text-sm">(ID, 名前, ギフトで検索)</span>
+      </div>
       <div id="adminTable" class="w-full"></div>
     </div>
   </div>
 
   <!-- Toast -->
-  <div id="toast" class="fixed bottom-4 left-1/2 -translate-x-1/2 hidden px-4 py-2 rounded shadow-lg bg-emerald-600 text-white"></div>
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 hidden px-5 py-3 rounded-lg shadow-xl bg-emerald-600 text-white text-sm font-medium"></div>
 
   <!-- Firebase & Scripts -->
   <script type="module">
-    // ===== Firebase Config =====
+    /* ===== Firebase Config ===== */
     const firebaseConfig = { apiKey:"AIzaSyAA-XGpkTYSttDq7Pm8FEPG1XF6ybbLBLI", authDomain:"wedding2025-56e05.firebaseapp.com", projectId:"wedding2025-56e05", storageBucket:"wedding2025-56e05.appspot.com", messagingSenderId:"650015960238", appId:"1:650015960238:web:f1d4403120b51f5bc4513f" };
-
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, runTransaction, onSnapshot, increment } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
     const app = initializeApp(firebaseConfig);
     const db  = getFirestore(app);
 
@@ -109,6 +146,7 @@
     /* ---------- Stock & Select UI Binding ---------- */
     const giftSelect = document.getElementById("giftSelect");
     const stockBody  = document.getElementById("stockBody");
+    const stockBadge = document.getElementById("stockBadge");
 
     function applyStockData(snap){
       stockBody.innerHTML="";
@@ -117,9 +155,11 @@
         const {label,remain}=d.data();
         const badge = remain===0?"bg-red-500": remain<4?"bg-amber-400":"bg-emerald-500";
         stockBody.insertAdjacentHTML("beforeend",
-          `<tr><td class="border px-2 py-1">${label}</td><td class="border px-2 py-1 text-center"><span class="inline-block w-14 text-white ${badge} rounded-full">${remain}</span></td></tr>`);
+          `<tr class="hover:bg-slate-50 dark:hover:bg-slate-800 transition"><td class="px-3 py-2">${label}</td><td class="px-3 py-2 text-center"><span class="inline-block w-16 text-white ${badge} rounded-full">${remain}</span></td></tr>`);
         if(remain>0) giftSelect.insertAdjacentHTML("beforeend",`<option value="${d.id}">${label}</option>`);
       });
+      stockBadge.classList.toggle("hidden", snap.size===0);
+      stockBadge.textContent = `全${snap.size}種類`;
     }
 
     onSnapshot(collection(db,"stock"),applyStockData);
@@ -149,7 +189,7 @@
         });
         toast("申し込み/変更が完了しました");
         e.target.reset();
-      }catch(err){alert(err.message);}
+      }catch(err){alert(err.message);}  
     });
 
     /* ---------- Admin Modal ---------- */
@@ -170,8 +210,8 @@
         paginationSize:10,
         movableColumns:true,
         columns:[
-          {title:"日時", field:"ts", width:160, formatter:ts=>new Date(ts.getValue()).toLocaleString()},
-          {title:"ID", field:"id", width:90},
+          {title:"日時", field:"ts", width:170, formatter:ts=>new Date(ts.getValue()).toLocaleString()},
+          {title:"ID", field:"id", width:100},
           {title:"名前", field:"name"},
           {title:"ギフト", field:"giftLabel"}
         ]
@@ -195,9 +235,9 @@
     document.getElementById("editStockBtn").onclick=async()=>{
       if(prompt("在庫編集パスワード(4桁)")!=="2025")return alert("パスワードが違います");
       const snap=await getDocs(collection(db,"stock"));
-      let html="<table class='w-full text-left border mb-3'><thead class='bg-slate-200'><tr><th class='p-1'>ギフト</th><th class='p-1'>残数</th></tr></thead><tbody>";
-      snap.forEach(d=>{const {label,remain}=d.data();html+=`<tr><td class='border px-1'>${label}</td><td class='border'><input data-id='${d.id}' type='number' min='0' value='${remain}' class='w-20 px-1 border rounded'/></td></tr>`});
-      html+="</tbody></table><button id='saveStockChanges' class='bg-emerald-600 text-white px-3 py-1 rounded hover:brightness-110'>保存</button>";
+      let html="<table class='min-w-full text-left text-sm mb-4'><thead class='bg-slate-100 dark:bg-slate-800'><tr><th class='p-2'>ギフト</th><th class='p-2'>残数</th></tr></thead><tbody>";
+      snap.forEach(d=>{const {label,remain}=d.data();html+=`<tr class='divide-y divide-slate-100 dark:divide-slate-700'><td class='border px-2 py-1'>${label}</td><td class='border'><input data-id='${d.id}' type='number' min='0' value='${remain}' class='w-24 px-2 py-1 rounded-lg border border-slate-300 dark:border-slate-600 bg-white/80 dark:bg-slate-800/40'/></td></tr>`});
+      html+="</tbody></table><button id='saveStockChanges' class='mt-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg shadow'>保存</button>";
       document.getElementById("adminTable").innerHTML=html;
       document.getElementById("saveStockChanges").onclick=async()=>{
         const inputs=document.querySelectorAll("[data-id]");
