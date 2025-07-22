@@ -5,215 +5,221 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Wedding Gift Catalog</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Font → Poppins -->
+  <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tabulator-tables@5.6.2/dist/js/tabulator.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tabulator-tables@5.6.2/dist/css/tabulator_midnight.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
     body { font-family: 'Poppins', sans-serif; }
-    /* 背景の柔らかいグラデーション */
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      background: radial-gradient(at top left, #fdf2f8, #e0f2fe 40%, #f0fdf4 80%);
-      z-index: -1;
+    .glass {
+      backdrop-filter: blur(12px) saturate(180%);
+      background: rgba(255, 255, 255, 0.75);
     }
   </style>
 </head>
-<body class="min-h-screen flex items-center py-10 px-4">
-  <div class="w-full max-w-3xl mx-auto space-y-8">
-    <!-- ===== ヘッダー ===== -->
-    <header class="text-center">
-      <h1 class="text-3xl md:text-4xl font-semibold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 select-none">引き出物 カタログギフト</h1>
-      <p class="text-gray-600 mt-2">ID を使ってお好きなギフトをお選びください</p>
-    </header>
+<body class="min-h-screen bg-gradient-to-br from-emerald-100 via-cyan-100 to-sky-100 flex flex-col items-center">
+  <!-- ########## HERO ########## -->
+  <header class="w-full py-8 text-center">
+    <h1 class="text-3xl font-semibold text-sky-700 tracking-wide">Wedding Gift Catalog</h1>
+    <p class="text-gray-600">ID とお名前でいつでも変更可能！</p>
+  </header>
 
-    <!-- ========= 利用者ビュー ========= -->
-    <div id="quizView" class="bg-white/70 backdrop-blur shadow-xl rounded-3xl p-8 space-y-6 ring-1 ring-gray-200">
-      <!-- Form -->
-      <form id="entryForm" class="grid gap-6">
-        <div>
-          <label for="guestId" class="block text-sm font-medium text-gray-700">ID (4桁) <span class="text-red-500">*</span></label>
-          <input id="guestId" type="text" pattern="\d{4}" maxlength="4" required placeholder="0001" class="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-pink-500 focus:outline-none" />
+  <main id="quizView" class="glass w-full max-w-3xl mx-auto p-6 rounded-3xl shadow-xl space-y-8">
+    <!-- 申込フォーム -->
+    <section>
+      <h2 class="text-xl font-semibold text-sky-700 mb-4 flex items-center gap-2"><i data-lucide="edit-3" class="w-5 h-5"></i>エントリー</h2>
+      <form id="entryForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="col-span-1">
+          <label class="block text-sm font-medium mb-1" for="guestId">ID (4桁)</label>
+          <input id="guestId" type="text" pattern="\d{4}" required placeholder="0001" maxlength="4" class="w-full border px-3 py-2 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-sky-300"/>
         </div>
-        <div>
-          <label for="guestName" class="block text-sm font-medium text-gray-700">お名前 <span class="text-red-500">*</span></label>
-          <input id="guestName" type="text" required placeholder="山田 太郎" class="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-pink-500 focus:outline-none" />
+        <div class="col-span-1">
+          <label class="block text-sm font-medium mb-1" for="guestName">お名前</label>
+          <input id="guestName" type="text" required placeholder="山田 花子" class="w-full border px-3 py-2 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-sky-300"/>
         </div>
-        <div>
-          <label for="giftSelect" class="block text-sm font-medium text-gray-700">ご希望のギフト <span class="text-red-500">*</span></label>
-          <select id="giftSelect" required class="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-pink-500 focus:outline-none"></select>
+        <div class="col-span-1 md:col-span-2">
+          <label class="block text-sm font-medium mb-1" for="giftSelect">ご希望ギフト</label>
+          <select id="giftSelect" required class="w-full border px-3 py-2 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-sky-300"></select>
         </div>
-        <button id="submitBtn" type="submit" class="inline-flex justify-center rounded-full bg-gradient-to-r from-pink-500 to-red-500 px-6 py-3 text-white font-medium shadow-md hover:from-pink-600 hover:to-red-600 transition">申し込む / 変更する</button>
+        <button id="submitBtn" type="submit" class="col-span-1 md:col-span-2 bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 rounded-lg shadow-md transition">申し込む / 変更</button>
       </form>
+      <p id="notice" class="mt-3 text-center text-emerald-600 font-medium hidden"></p>
+    </section>
 
-      <!-- Notification -->
-      <div id="notice" class="hidden text-center text-green-700 bg-green-50 border border-green-200 rounded-lg p-4"></div>
+    <!-- 在庫表 -->
+    <section>
+      <h2 class="text-xl font-semibold text-sky-700 mb-4 flex items-center gap-2"><i data-lucide="package" class="w-5 h-5"></i>残り在庫</h2>
+      <div id="stockTable" class="w-full"></div>
+    </section>
 
-      <!-- Stock -->
-      <section class="space-y-3">
-        <h2 class="text-lg font-semibold text-gray-700">残り在庫</h2>
-        <div class="grid grid-cols-2 gap-4" id="stockCards"></div>
-      </section>
-
-      <!-- Admin Link -->
-      <div class="text-right">
-        <button id="adminBtn" class="text-sm font-medium text-pink-600 hover:underline">管理ページへ</button>
-      </div>
+    <!-- 管理ページボタン -->
+    <div class="text-right">
+      <a id="adminBtn" class="inline-flex items-center gap-1 text-sky-700 hover:underline cursor-pointer"><i data-lucide="lock" class="w-4 h-4"></i>管理ページへ</a>
     </div>
+  </main>
 
-    <!-- ========= 管理ビュー ========= -->
-    <div id="adminView" class="hidden bg-white/80 backdrop-blur shadow-xl rounded-3xl p-8 space-y-6 ring-1 ring-gray-200">
-      <h2 class="text-2xl font-semibold text-center text-gray-800">エントリー一覧</h2>
-      <div class="overflow-x-auto">
-        <table class="w-full text-left border border-gray-200 rounded-lg overflow-hidden">
-          <thead class="bg-gray-100 text-gray-700">
-            <tr>
-              <th class="px-3 py-2 text-sm">日時</th><th class="px-3 py-2 text-sm">ID</th><th class="px-3 py-2 text-sm">名前</th><th class="px-3 py-2 text-sm">ギフト</th>
-            </tr>
-          </thead>
-          <tbody id="entryBody" class="text-sm bg-white divide-y divide-gray-100"></tbody>
-        </table>
-      </div>
-      <div class="flex justify-end gap-4">
-        <button id="csvBtn" class="rounded-full bg-green-500 px-4 py-2 text-white shadow hover:bg-green-600">CSV ダウンロード</button>
-        <button id="backBtn" class="rounded-full bg-gray-500 px-4 py-2 text-white shadow hover:bg-gray-600">戻る</button>
-      </div>
+  <!-- ########## ADMIN VIEW ########## -->
+  <main id="adminView" class="hidden glass w-full max-w-4xl mx-auto p-6 rounded-3xl shadow-xl space-y-6">
+    <div class="flex justify-between items-center mb-4">
+      <button id="backBtn" class="flex items-center gap-1 text-sky-700 hover:underline"><i data-lucide="arrow-left" class="w-5 h-5"></i>フォームへ戻る</button>
+      <button id="csvBtn" class="flex items-center gap-1 bg-sky-600 hover:bg-sky-700 text-white px-3 py-1 rounded-lg shadow"><i data-lucide="download" class="w-4 h-4"></i>CSV ダウンロード</button>
     </div>
-  </div>
+    <div id="entryTable" class="w-full"></div>
+  </main>
 
-  <!-- Firebase SDK & Logic -->
+  <!-- Firebase & Tabulator Logic -->
   <script type="module">
-    const firebaseConfig = { apiKey:"AIzaSyAA-XGpkTYSttDq7Pm8FEPG1XF6ybbLBLI", authDomain:"wedding2025-56e05.firebaseapp.com", projectId:"wedding2025-56e05", storageBucket:"wedding2025-56e05.firebasestorage.app", messagingSenderId:"650015960238", appId:"1:650015960238:web:f1d4403120b51f5bc4513f" };
-    const ADMIN_PASS = "kudeta2025";
-
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, doc, getDoc, runTransaction, onSnapshot, query, orderBy, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFirestore, collection, doc, runTransaction, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+    // === Firebase Config ===
+    const firebaseConfig = {
+      apiKey: "AIzaSyAA-XGpkTYSttDq7Pm8FEPG1XF6ybbLBLI",
+      authDomain: "wedding2025-56e05.firebaseapp.com",
+      projectId: "wedding2025-56e05",
+      storageBucket: "wedding2025-56e05.firebasestorage.app",
+      messagingSenderId: "650015960238",
+      appId: "1:650015960238:web:f1d4403120b51f5bc4513f",
+    };
     const app = initializeApp(firebaseConfig);
     const db  = getFirestore(app);
 
+    // === Gift Catalog ===
     const catalog = [
-      { id: "flower",    label: "フラワーギフト",          stock: 10, color:"from-pink-400 to-pink-600" },
-      { id: "nihon",     label: "日本料理お取り寄せ",      stock: 10, color:"from-amber-400 to-amber-600" },
-      { id: "wine",      label: "ワイン",                stock: 12, color:"from-purple-400 to-purple-600" },
-      { id: "golf",      label: "バーチャルゴルフ",      stock: 8 , color:"from-green-400 to-green-600" },
-      { id: "vision",    label: "経営理念コンサル",      stock: 5 , color:"from-indigo-400 to-indigo-600" },
-      { id: "lovehotel", label: "ラブホ優待券",          stock: 20, color:"from-rose-400 to-rose-600" },
-      { id: "massage",   label: "マッサージチケット",      stock: 15, color:"from-teal-400 to-teal-600" },
-      { id: "dinner",    label: "ディナーコース",        stock: 15, color:"from-yellow-400 to-yellow-600" },
-      { id: "personal",  label: "パーソナルトレーニング",  stock: 10, color:"from-cyan-400 to-cyan-600" },
-      { id: "yakiniku",  label: "焼肉用お肉",            stock: 10, color:"from-fuchsia-400 to-fuchsia-600" }
+      { id: "flower",    label: "フラワーギフト",            stock: 10 },
+      { id: "nihon",     label: "日本料理お取り寄せ",        stock: 10 },
+      { id: "wine",      label: "ワイン",                  stock: 12 },
+      { id: "golf",      label: "バーチャルゴルフ",          stock: 8  },
+      { id: "vision",    label: "経営理念コンサル",          stock: 5  },
+      { id: "lovehotel", label: "ラブホ優待券",              stock: 20 },
+      { id: "massage",   label: "マッサージチケット",        stock: 15 },
+      { id: "dinner",    label: "ディナーコース",            stock: 15 },
+      { id: "personal",  label: "パーソナルトレーニング",    stock: 10 },
+      { id: "yakiniku",  label: "焼肉用お肉",                stock: 10 }
     ];
 
-    /* ----- 在庫投入 (初回のみ) ----- */
-    async function seedStock(){
-      for(const item of catalog){
-        await setDoc(doc(db,"stock",item.id),{label:item.label,remain:item.stock},{merge:true});
-      }
-    }
-    // seedStock(); // ←在庫未投入ならコメントを外して 1 回実行
+    // === Seed stock once (comment out after first deploy) ===
+    /*
+    import { setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    catalog.forEach(async item=>{
+      await setDoc(doc(db,"stock",item.id),{label:item.label,remain:item.stock});
+    });
+    */
 
-    /* ----- 要素 ----- */
+    // === UI Elements ===
+    const guestId    = document.getElementById("guestId");
+    const guestName  = document.getElementById("guestName");
     const giftSelect = document.getElementById("giftSelect");
-    const stockCards = document.getElementById("stockCards");
     const notice     = document.getElementById("notice");
-    const entryBody  = document.getElementById("entryBody");
-    const quizView   = document.getElementById("quizView");
-    const adminView  = document.getElementById("adminView");
 
-    /* ----- 在庫リアルタイム ----- */
-    onSnapshot(collection(db,"stock"), snap=>{
-      stockCards.innerHTML="";
-      giftSelect.innerHTML="";
-      snap.forEach(d=>{
-        const {label,remain}=d.data();
-        const meta = catalog.find(c=>c.id===d.id) || {color:"from-gray-400 to-gray-500"};
-        stockCards.insertAdjacentHTML("beforeend",
-          `<div class="rounded-xl bg-gradient-to-r ${meta.color} p-1 shadow">
-            <div class="flex items-center justify-between bg-white/90 backdrop-blur rounded-lg px-4 py-3">
-              <span class="font-medium text-gray-700">${label}</span>
-              <span class="text-lg font-semibold text-gray-800">${remain}</span>
-            </div>
-          </div>`);
-        if(remain>0) giftSelect.insertAdjacentHTML("beforeend",`<option value="${d.id}">${label}</option>`);
-      });
+    // === Stock Table (Tabulator) ===
+    const stockTable = new Tabulator("#stockTable",{
+      height:"200px",
+      layout:"fitColumns",
+      placeholder:"在庫データがありません",
+      columns:[
+        {title:"ギフト", field:"label", widthGrow:3},
+        {title:"残数", field:"remain", hozAlign:"center", widthGrow:1},
+      ],
     });
 
-    /* ----- 申し込み・変更 ----- */
-    document.getElementById("entryForm").addEventListener("submit", async e=>{
+    // === Entry Table ===
+    const entryTable = new Tabulator("#entryTable",{
+      height:"400px", layout:"fitColumns",
+      columns:[
+        {title:"日時", field:"ts", formatter:(cell)=>new Date(cell.getValue()).toLocaleString(), widthGrow:2},
+        {title:"ID", field:"id", widthGrow:1, hozAlign:"center"},
+        {title:"名前", field:"name", widthGrow:2},
+        {title:"ギフト", field:"label", widthGrow:3},
+      ],
+    });
+
+    // === Real-time Stock Listener ===
+    onSnapshot(collection(db,"stock"),snap=>{
+      const stockData = [];
+      giftSelect.innerHTML="";
+      snap.forEach(docSnap=>{
+        const d = docSnap.data();
+        stockData.push({id:docSnap.id, ...d});
+        if(d.remain>0){
+          giftSelect.insertAdjacentHTML("beforeend",`<option value="${docSnap.id}">${d.label}</option>`);
+        }
+      });
+      stockTable.replaceData(stockData);
+    });
+
+    // === Real-time Entries Listener (admin) ===
+    function loadEntries(){
+      onSnapshot(collection(db,"entries"),snap=>{
+        const arr=[]; snap.forEach(d=>arr.push(d.data()));
+        entryTable.replaceData(arr);
+      });
+    }
+
+    // === Form Submit ===
+    document.getElementById("entryForm").addEventListener("submit",async e=>{
       e.preventDefault();
-      const id=document.getElementById("guestId").value.trim();
-      const name=document.getElementById("guestName").value.trim();
-      const giftId=giftSelect.value;
-      if(!/^[0-9]{4}$/.test(id)) return alert("ID は 4 桁数字で入力してください");
-      if(!name) return alert("お名前を入力してください");
-      if(!giftId) return alert("在庫切れのため選択できません");
+      const id  = guestId.value.trim();
+      const name= guestName.value.trim();
+      const giftId = giftSelect.value;
+      if(!/^[0-9]{4}$/.test(id)){alert("IDは4桁数字です"); return;}
       try{
         await runTransaction(db, async tx=>{
-          const entryRef=doc(db,"entries",id);
-          const entrySnap=await tx.get(entryRef);
-          let prevGiftId=null;
-          if(entrySnap.exists()){
-            prevGiftId=entrySnap.data().giftId;
-            if(prevGiftId){
-              const prevRef=doc(db,"stock",prevGiftId);
-              const prevSnap=await tx.get(prevRef);
-              if(prevSnap.exists()) tx.update(prevRef,{remain: prevSnap.data().remain+1});
-            }
+          const entryRef = doc(db,"entries",id);
+          const entrySnap= await tx.get(entryRef);
+          let prevGiftId = null;
+          if(entrySnap.exists()) prevGiftId = entrySnap.data().giftId;
+
+          // 在庫計算: 元のギフトに戻し + 新ギフトから引く
+          const newGiftRef = doc(db,"stock",giftId);
+          const newGiftSnap= await tx.get(newGiftRef);
+          if(!newGiftSnap.exists()||newGiftSnap.data().remain<=0) throw new Error("在庫切れです");
+
+          if(prevGiftId){
+            const oldRef = doc(db,"stock",prevGiftId);
+            const oldSnap= await tx.get(oldRef);
+            tx.update(oldRef,{remain: oldSnap.data().remain+1});
           }
-          const stockRef=doc(db,"stock",giftId);
-          const stockSnap=await tx.get(stockRef);
-          const stockData=stockSnap.data();
-          if(!stockData||stockData.remain<=0) throw new Error("在庫切れです");
-          tx.update(stockRef,{remain: stockData.remain-1});
-          tx.set(entryRef,{id,name,giftId,giftLabel:stockData.label,ts:Date.now()});
+          tx.update(newGiftRef,{remain: newGiftSnap.data().remain-1});
+          // エントリー上書き
+          tx.set(entryRef,{id,name,giftId,label:newGiftSnap.data().label,ts:Date.now()});
         });
-        notice.textContent="お申し込みを受け付けました！ (変更があれば反映済み)";
-        notice.classList.remove("hidden");
+        notice.textContent="登録が完了しました！"; notice.classList.remove("hidden");
+        setTimeout(()=>notice.classList.add("hidden"),3000);
         e.target.reset();
-      }catch(err){alert(err.message)}
+      }catch(err){alert(err.message);}  
     });
 
-    /* ----- 管理ページ ----- */
-    document.getElementById("adminBtn").onclick = ()=>{
-      const pass=prompt("管理者パスワードを入力");
-      if(pass!==ADMIN_PASS) return alert("パスワードが違います");
-      quizView.classList.add("hidden");
-      adminView.classList.remove("hidden");
+    // === Admin Navigation ===
+    document.getElementById("adminBtn").onclick=()=>{
+      const pass = prompt("管理パスワードを入力");
+      if(pass!=="wedding2025") return alert("パスワードが違います");
+      document.getElementById("quizView").classList.add("hidden");
+      document.getElementById("adminView").classList.remove("hidden");
       loadEntries();
     };
     document.getElementById("backBtn").onclick=()=>{
-      adminView.classList.add("hidden");
-      quizView.classList.remove("hidden");
+      document.getElementById("adminView").classList.add("hidden");
+      document.getElementById("quizView").classList.remove("hidden");
     };
 
-    async function loadEntries(){
-      onSnapshot(query(collection(db,"entries"),orderBy("ts","desc")), snap=>{
-        entryBody.innerHTML="";
-        snap.forEach(d=>{
-          const {id,name,giftLabel,ts}=d.data();
-          const date=new Date(ts).toLocaleString("ja-JP",{year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit"});
-          entryBody.insertAdjacentHTML("beforeend",
-            `<tr class="hover:bg-gray-50"><td class="px-3 py-2" title="${date}">${date}</td><td class="px-3 py-2">${id}</td><td class="px-3 py-2">${name}</td><td class="px-3 py-2">${giftLabel}</td></tr>`);
-        });
-      });
-    }
-
-    /* ----- CSV ダウンロード ----- */
+    // === CSV Download ===
     document.getElementById("csvBtn").onclick=async()=>{
-      const snap=await onSnapshot(query(collection(db,"entries"),orderBy("ts","desc")),()=>{}).unsubscribe();
-      const qSnap=await query(collection(db,"entries"));
-      const docs=(await qSnap.get()).docs||[]; // fallback for modular limitation
-      let csv="日時,ID,名前,ギフト\n";
-      docs.forEach(d=>{
-        const {id,name,giftLabel,ts}=d.data();
-        csv+=`${new Date(ts).toLocaleString("ja-JP")},${id},${name},${giftLabel}\n`;
+      const rows=[];
+      const snap = await getDocs(collection(db,"entries"));
+      snap.forEach(d=>{
+        const {id,name,label,ts}=d.data();
+        rows.push([new Date(ts).toLocaleString(),id,name,label]);
       });
-      const blob=new Blob([csv],{type:"text/csv"});
-      const url=URL.createObjectURL(blob);
+      const csvContent = "data:text/csv;charset=utf-8," + rows.map(r=>r.join(",")).join("\n");
       const a=document.createElement("a");
-      a.href=url;a.download="entries.csv";a.click();URL.revokeObjectURL(url);
+      a.href=encodeURI(csvContent);
+      a.download=`entries_${new Date().toISOString().slice(0,10)}.csv`;
+      a.click();
     };
+
+    // Feather icons replace
+    lucide.createIcons();
   </script>
 </body>
 </html>
