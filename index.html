@@ -4,44 +4,46 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Wedding Gift Catalog</title>
+  <!-- TailwindCSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Icons & Table Lib -->
   <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/tabulator-tables@5.6.2/dist/js/tabulator.min.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tabulator-tables@5.6.2/dist/css/tabulator_midnight.min.css" />
+  <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
     body { font-family: 'Poppins', sans-serif; }
-    .glass {
-      backdrop-filter: blur(12px) saturate(180%);
-      background: rgba(255, 255, 255, 0.75);
-    }
+    .glass { backdrop-filter: blur(12px) saturate(180%); background: rgba(255,255,255,0.75); }
+    .toast { position: fixed; right: 1rem; bottom: 1.5rem; padding:.6rem 1rem; border-radius:.75rem; background:#34d399; color:#fff; font-weight:500; }
   </style>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-emerald-100 via-cyan-100 to-sky-100 flex flex-col items-center">
   <!-- ########## HERO ########## -->
-  <header class="w-full py-8 text-center">
+  <header class="w-full py-8 text-center select-none">
     <h1 class="text-3xl font-semibold text-sky-700 tracking-wide">Wedding Gift Catalog</h1>
     <p class="text-gray-600">ID とお名前でいつでも変更可能！</p>
   </header>
 
+  <!-- ########## USER VIEW ########## -->
   <main id="quizView" class="glass w-full max-w-3xl mx-auto p-6 rounded-3xl shadow-xl space-y-8">
     <!-- 申込フォーム -->
     <section>
       <h2 class="text-xl font-semibold text-sky-700 mb-4 flex items-center gap-2"><i data-lucide="edit-3" class="w-5 h-5"></i>エントリー</h2>
       <form id="entryForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="col-span-1">
+        <div>
           <label class="block text-sm font-medium mb-1" for="guestId">ID (4桁)</label>
-          <input id="guestId" type="text" pattern="\d{4}" required placeholder="0001" maxlength="4" class="w-full border px-3 py-2 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-sky-300"/>
+          <input id="guestId" type="text" pattern="\d{4}" maxlength="4" required placeholder="0001" class="w-full border px-3 py-2 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-sky-300" />
         </div>
-        <div class="col-span-1">
+        <div>
           <label class="block text-sm font-medium mb-1" for="guestName">お名前</label>
-          <input id="guestName" type="text" required placeholder="山田 花子" class="w-full border px-3 py-2 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-sky-300"/>
+          <input id="guestName" type="text" required placeholder="山田 花子" class="w-full border px-3 py-2 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-sky-300" />
         </div>
-        <div class="col-span-1 md:col-span-2">
+        <div class="md:col-span-2">
           <label class="block text-sm font-medium mb-1" for="giftSelect">ご希望ギフト</label>
           <select id="giftSelect" required class="w-full border px-3 py-2 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-sky-300"></select>
         </div>
-        <button id="submitBtn" type="submit" class="col-span-1 md:col-span-2 bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 rounded-lg shadow-md transition">申し込む / 変更</button>
+        <button id="submitBtn" type="submit" class="md:col-span-2 bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 rounded-lg shadow-md transition">申し込む / 変更</button>
       </form>
       <p id="notice" class="mt-3 text-center text-emerald-600 font-medium hidden"></p>
     </section>
@@ -54,7 +56,7 @@
 
     <!-- 管理ページボタン -->
     <div class="text-right">
-      <a id="adminBtn" class="inline-flex items-center gap-1 text-sky-700 hover:underline cursor-pointer"><i data-lucide="lock" class="w-4 h-4"></i>管理ページへ</a>
+      <a id="adminBtn" class="inline-flex items-center gap-1 text-sky-700 hover:underline cursor-pointer"><i data-lucide="shield" class="w-4 h-4"></i>管理ページへ</a>
     </div>
   </main>
 
@@ -62,17 +64,29 @@
   <main id="adminView" class="hidden glass w-full max-w-4xl mx-auto p-6 rounded-3xl shadow-xl space-y-6">
     <div class="flex justify-between items-center mb-4">
       <button id="backBtn" class="flex items-center gap-1 text-sky-700 hover:underline"><i data-lucide="arrow-left" class="w-5 h-5"></i>フォームへ戻る</button>
-      <button id="csvBtn" class="flex items-center gap-1 bg-sky-600 hover:bg-sky-700 text-white px-3 py-1 rounded-lg shadow"><i data-lucide="download" class="w-4 h-4"></i>CSV ダウンロード</button>
+      <div class="flex gap-3 items-center">
+        <button id="refreshStockBtn" class="flex items-center gap-1 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded-lg shadow"><i data-lucide="refresh-ccw" class="w-4 h-4"></i>在庫リフレッシュ</button>
+        <button id="csvBtn" class="flex items-center gap-1 bg-sky-600 hover:bg-sky-700 text-white px-3 py-1 rounded-lg shadow"><i data-lucide="download" class="w-4 h-4"></i>CSV</button>
+      </div>
     </div>
-    <div id="entryTable" class="w-full"></div>
+    <div class="grid md:grid-cols-2 gap-6">
+      <div>
+        <h3 class="font-semibold mb-2 flex items-center gap-1"><i data-lucide="package-search" class="w-4 h-4"></i>在庫一覧</h3>
+        <div id="adminStockTable"></div>
+      </div>
+      <div>
+        <h3 class="font-semibold mb-2 flex items-center gap-1"><i data-lucide="users" class="w-4 h-4"></i>応募一覧</h3>
+        <div id="entryTable"></div>
+      </div>
+    </div>
   </main>
 
-  <!-- Firebase & Tabulator Logic -->
+  <!-- ########## JS ########## -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getFirestore, collection, doc, runTransaction, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    // === Firebase Config ===
+    /* === Firebase === */
     const firebaseConfig = {
       apiKey: "AIzaSyAA-XGpkTYSttDq7Pm8FEPG1XF6ybbLBLI",
       authDomain: "wedding2025-56e05.firebaseapp.com",
@@ -84,7 +98,7 @@
     const app = initializeApp(firebaseConfig);
     const db  = getFirestore(app);
 
-    // === Gift Catalog ===
+    /* === Gift catalog (for initial seeding only) === */
     const catalog = [
       { id: "flower",    label: "フラワーギフト",            stock: 10 },
       { id: "nihon",     label: "日本料理お取り寄せ",        stock: 10 },
@@ -98,128 +112,107 @@
       { id: "yakiniku",  label: "焼肉用お肉",                stock: 10 }
     ];
 
-    // === Seed stock once (comment out after first deploy) ===
+    // ======= UI elements =======
+    const guestId    = document.getElementById("guestId");
+    const guestName  = document.getElementById("guestName");
+    const giftSelect = document.getElementById("giftSelect");
+    const notice     = document.getElementById("notice");
+
+    // ========= Tabulator tables =========
+    const stockTable = new Tabulator("#stockTable",{height:"200px",layout:"fitColumns",placeholder:"在庫データがありません",columns:[
+      {title:"ギフト",field:"label",widthGrow:3},
+      {title:"残数",field:"remain",hozAlign:"center",widthGrow:1}
+    ]});
+
+    const adminStockTable = new Tabulator("#adminStockTable",{height:"350px",layout:"fitColumns",placeholder:"在庫データがありません",columns:[
+      {title:"ギフト",field:"label",widthGrow:3},
+      {title:"残数",field:"remain",hozAlign:"center",widthGrow:1}
+    ]});
+
+    const entryTable = new Tabulator("#entryTable",{height:"350px",layout:"fitColumns",placeholder:"応募がありません",columns:[
+      {title:"日時",field:"ts",formatter:(c)=>new Date(c.getValue()).toLocaleString(),widthGrow:2},
+      {title:"ID",field:"id",hozAlign:"center",widthGrow:1},
+      {title:"名前",field:"name",widthGrow:2},
+      {title:"ギフト",field:"label",widthGrow:3}
+    ]});
+
+    // ======= Helper: toast =======
+    const Toast = (msg)=>{const t=document.createElement("div");t.textContent=msg;t.className="toast";document.body.appendChild(t);setTimeout(()=>t.remove(),2500);};
+
+    // ======= Stock listener (shared) =======
+    function applyStockData(snap){
+      const arr=[]; giftSelect.innerHTML="";
+      snap.forEach(d=>{const v=d.data(); arr.push({id:d.id,...v}); if(v.remain>0){giftSelect.insertAdjacentHTML("beforeend",`<option value="${d.id}">${v.label}</option>`);}});
+      stockTable.replaceData(arr);
+      adminStockTable.replaceData(arr);
+    }
+    onSnapshot(collection(db,"stock"),applyStockData);
+
+    // ======= Entries listener (admin) =======
+    function loadEntries(){onSnapshot(collection(db,"entries"),snap=>{const a=[];snap.forEach(d=>a.push(d.data()));entryTable.replaceData(a);});}
+
+    // ======= Entry form submit =======
+    document.getElementById("entryForm").addEventListener("submit",async e=>{
+      e.preventDefault();
+      const id  = guestId.value.trim();
+      const name= guestName.value.trim();
+      const giftId = giftSelect.value;
+      if(!/^[0-9]{4}$/.test(id)){alert("IDは4桁数字です");return;}
+      try{
+        await runTransaction(db,async tx=>{
+          const entryRef = doc(db,"entries",id);
+          const entrySnap= await tx.get(entryRef);
+          let prevGiftId=null;
+          if(entrySnap.exists()) prevGiftId=entrySnap.data().giftId;
+
+          const newGiftRef=doc(db,"stock",giftId);
+          const newGiftSnap=await tx.get(newGiftRef);
+          if(!newGiftSnap.exists()||newGiftSnap.data().remain<=0) throw new Error("在庫切れです");
+
+          // 戻す処理
+          if(prevGiftId){const oldRef=doc(db,"stock",prevGiftId);const oldSnap=await tx.get(oldRef);tx.update(oldRef,{remain:oldSnap.data().remain+1});}
+          // 新しいギフト減算
+          tx.update(newGiftRef,{remain:newGiftSnap.data().remain-1});
+          // エントリー上書き
+          tx.set(entryRef,{id,name,giftId,label:newGiftSnap.data().label,ts:Date.now()});
+        });
+        notice.textContent="登録が完了しました！"; notice.classList.remove("hidden"); setTimeout(()=>notice.classList.add("hidden"),3000);
+        e.target.reset();
+      }catch(err){alert(err.message);}
+    });
+
+    // ======= Admin nav buttons =======
+    document.getElementById("adminBtn").onclick =()=>{
+      const pwd=prompt("管理ページパスワード"); if(pwd!=="wedding2025") return alert("パスワードが違います");
+      quizView.classList.add("hidden"); adminView.classList.remove("hidden"); loadEntries();
+    };
+    document.getElementById("backBtn").onclick =()=>{
+      adminView.classList.add("hidden"); quizView.classList.remove("hidden");
+    };
+
+    // ======= CSV download =======
+    document.getElementById("csvBtn").onclick =()=>{
+      const ts=new Date().toISOString().slice(0,10).replace(/-/g,"");
+      entryTable.download("csv",`entries_${ts}.csv`);
+    };
+
+    // ======= Stock refresh with password =======
+    document.getElementById("refreshStockBtn").onclick = async ()=>{
+      const pwd=prompt("在庫リフレッシュ用パスワード (4桁)");
+      if(pwd!=="2025") return alert("パスワードが違います");
+      const snap=await getDocs(collection(db,"stock")); applyStockData(snap); Toast("在庫を更新しました");
+    };
+
+    // ======= Icon init =======
+    lucide.createIcons();
+
+    /* ===== seed stock (RUN ONCE then comment out) ===== */
     /*
     import { setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     catalog.forEach(async item=>{
       await setDoc(doc(db,"stock",item.id),{label:item.label,remain:item.stock});
     });
     */
-
-    // === UI Elements ===
-    const guestId    = document.getElementById("guestId");
-    const guestName  = document.getElementById("guestName");
-    const giftSelect = document.getElementById("giftSelect");
-    const notice     = document.getElementById("notice");
-
-    // === Stock Table (Tabulator) ===
-    const stockTable = new Tabulator("#stockTable",{
-      height:"200px",
-      layout:"fitColumns",
-      placeholder:"在庫データがありません",
-      columns:[
-        {title:"ギフト", field:"label", widthGrow:3},
-        {title:"残数", field:"remain", hozAlign:"center", widthGrow:1},
-      ],
-    });
-
-    // === Entry Table ===
-    const entryTable = new Tabulator("#entryTable",{
-      height:"400px", layout:"fitColumns",
-      columns:[
-        {title:"日時", field:"ts", formatter:(cell)=>new Date(cell.getValue()).toLocaleString(), widthGrow:2},
-        {title:"ID", field:"id", widthGrow:1, hozAlign:"center"},
-        {title:"名前", field:"name", widthGrow:2},
-        {title:"ギフト", field:"label", widthGrow:3},
-      ],
-    });
-
-    // === Real-time Stock Listener ===
-    onSnapshot(collection(db,"stock"),snap=>{
-      const stockData = [];
-      giftSelect.innerHTML="";
-      snap.forEach(docSnap=>{
-        const d = docSnap.data();
-        stockData.push({id:docSnap.id, ...d});
-        if(d.remain>0){
-          giftSelect.insertAdjacentHTML("beforeend",`<option value="${docSnap.id}">${d.label}</option>`);
-        }
-      });
-      stockTable.replaceData(stockData);
-    });
-
-    // === Real-time Entries Listener (admin) ===
-    function loadEntries(){
-      onSnapshot(collection(db,"entries"),snap=>{
-        const arr=[]; snap.forEach(d=>arr.push(d.data()));
-        entryTable.replaceData(arr);
-      });
-    }
-
-    // === Form Submit ===
-    document.getElementById("entryForm").addEventListener("submit",async e=>{
-      e.preventDefault();
-      const id  = guestId.value.trim();
-      const name= guestName.value.trim();
-      const giftId = giftSelect.value;
-      if(!/^[0-9]{4}$/.test(id)){alert("IDは4桁数字です"); return;}
-      try{
-        await runTransaction(db, async tx=>{
-          const entryRef = doc(db,"entries",id);
-          const entrySnap= await tx.get(entryRef);
-          let prevGiftId = null;
-          if(entrySnap.exists()) prevGiftId = entrySnap.data().giftId;
-
-          // 在庫計算: 元のギフトに戻し + 新ギフトから引く
-          const newGiftRef = doc(db,"stock",giftId);
-          const newGiftSnap= await tx.get(newGiftRef);
-          if(!newGiftSnap.exists()||newGiftSnap.data().remain<=0) throw new Error("在庫切れです");
-
-          if(prevGiftId){
-            const oldRef = doc(db,"stock",prevGiftId);
-            const oldSnap= await tx.get(oldRef);
-            tx.update(oldRef,{remain: oldSnap.data().remain+1});
-          }
-          tx.update(newGiftRef,{remain: newGiftSnap.data().remain-1});
-          // エントリー上書き
-          tx.set(entryRef,{id,name,giftId,label:newGiftSnap.data().label,ts:Date.now()});
-        });
-        notice.textContent="登録が完了しました！"; notice.classList.remove("hidden");
-        setTimeout(()=>notice.classList.add("hidden"),3000);
-        e.target.reset();
-      }catch(err){alert(err.message);}  
-    });
-
-    // === Admin Navigation ===
-    document.getElementById("adminBtn").onclick=()=>{
-      const pass = prompt("管理パスワードを入力");
-      if(pass!=="wedding2025") return alert("パスワードが違います");
-      document.getElementById("quizView").classList.add("hidden");
-      document.getElementById("adminView").classList.remove("hidden");
-      loadEntries();
-    };
-    document.getElementById("backBtn").onclick=()=>{
-      document.getElementById("adminView").classList.add("hidden");
-      document.getElementById("quizView").classList.remove("hidden");
-    };
-
-    // === CSV Download ===
-    document.getElementById("csvBtn").onclick=async()=>{
-      const rows=[];
-      const snap = await getDocs(collection(db,"entries"));
-      snap.forEach(d=>{
-        const {id,name,label,ts}=d.data();
-        rows.push([new Date(ts).toLocaleString(),id,name,label]);
-      });
-      const csvContent = "data:text/csv;charset=utf-8," + rows.map(r=>r.join(",")).join("\n");
-      const a=document.createElement("a");
-      a.href=encodeURI(csvContent);
-      a.download=`entries_${new Date().toISOString().slice(0,10)}.csv`;
-      a.click();
-    };
-
-    // Feather icons replace
-    lucide.createIcons();
   </script>
 </body>
 </html>
