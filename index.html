@@ -1,83 +1,99 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Wedding Gift Catalog</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel&family=Noto+Serif+JP&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
-      font-family: 'Playfair Display', serif;
-      background-color: #ffffff;
+      font-family: 'Noto Serif JP', serif;
+      background: #fdfcf9;
       color: #333;
     }
 
     header {
       text-align: center;
-      padding: 40px 20px 10px;
+      padding: 60px 20px 30px;
+      background-color: #fff;
     }
 
     header h1 {
-      font-size: 2em;
+      font-family: 'Cinzel', serif;
+      font-size: 2.5em;
       color: #d4af37;
-      margin-bottom: 0.2em;
+      margin-bottom: 10px;
     }
 
-    .services-section {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
-      padding: 20px;
+    header p {
+      font-size: 1.1em;
+      color: #555;
     }
 
-    .service-card {
-      border: 1px solid #d4af37;
+    .catalog-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      padding: 40px;
+    }
+
+    .card {
+      background-color: #fff;
+      border: 1px solid #e3d8b1;
       border-radius: 12px;
-      width: 300px;
+      box-shadow: 0 4px 12px rgba(212, 175, 55, 0.1);
       padding: 20px;
-      background-color: #fffaf0;
-      box-shadow: 0 4px 10px rgba(212, 175, 55, 0.2);
       transition: transform 0.3s ease;
     }
 
-    .service-card:hover {
+    .card:hover {
       transform: translateY(-5px);
     }
 
-    .service-card h3 {
+    .card h3 {
+      font-family: 'Cinzel', serif;
       color: #d4af37;
       font-size: 1.2em;
       margin-top: 0;
     }
 
-    .service-card p {
+    .card p {
       font-size: 0.95em;
+      margin: 10px 0 15px;
     }
 
-    .service-card a {
+    .card a {
       display: inline-block;
-      margin-top: 10px;
+      padding: 10px 16px;
+      border: 1px solid #d4af37;
       color: #d4af37;
+      border-radius: 5px;
       text-decoration: none;
       font-weight: bold;
+      transition: all 0.3s ease;
+    }
+
+    .card a:hover {
+      background-color: #d4af37;
+      color: #fff;
     }
 
     form {
       max-width: 500px;
-      margin: 40px auto;
+      margin: 50px auto;
+      background: #fff;
+      border: 1px solid #e3d8b1;
+      border-radius: 12px;
       padding: 30px;
-      background-color: #ffffff;
-      border: 1px solid #d4af37;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
+      box-shadow: 0 4px 15px rgba(212, 175, 55, 0.1);
     }
 
     form h2 {
-      color: #d4af37;
-      margin-bottom: 20px;
       text-align: center;
+      color: #d4af37;
+      font-family: 'Cinzel', serif;
+      margin-bottom: 20px;
     }
 
     label {
@@ -97,52 +113,77 @@
     button {
       width: 100%;
       padding: 12px;
-      background: linear-gradient(to right, #fceabb, #d4af37);
+      background: #d4af37;
       color: #fff;
       border: none;
       border-radius: 5px;
       font-size: 1em;
       cursor: pointer;
-      transition: opacity 0.3s ease;
     }
 
     button:hover {
       opacity: 0.9;
     }
 
-    .footer-note {
+    .footer {
       text-align: center;
       font-size: 0.9em;
-      color: #777;
-      margin-bottom: 40px;
+      padding: 40px 20px;
+      color: #999;
     }
   </style>
 </head>
 <body>
-
   <header>
     <h1>Wedding Gift Catalog</h1>
-    <p>お好きなギフトをお選びください</p>
+    <p>ふたりから、心を込めた贈りものを。</p>
   </header>
 
-  <section class="services-section">
-    <div class="service-card">
-      <h3>パーソナルトレーニング REV GYM</h3>
-      <p>あなた専属のトレーナーが、理想の体づくりをサポートします。完全予約制のプライベート空間。</p>
-      <a href="https://rev-gym.com/" target="_blank">公式サイトを見る</a>
+  <section class="catalog-section">
+    <div class="card">
+      <h3>REV GYM（パーソナルトレーニング）</h3>
+      <p>理想のカラダを叶える完全個別指導ジム。</p>
+      <a href="https://rev-gym.com/" target="_blank">公式サイト</a>
     </div>
-
-    <!-- 他のサービスも以下の形式で追加できます -->
-    <div class="service-card">
+    <div class="card">
       <h3>エステサロン Elegance</h3>
-      <p>贅沢なリラクゼーションで、日常を忘れる癒しのひとときを。</p>
-      <a href="https://example.com" target="_blank">公式サイトを見る</a>
+      <p>贅沢な癒しを体験できる本格エステコース。</p>
+      <a href="#">公式サイト</a>
     </div>
-
-    <div class="service-card">
+    <div class="card">
       <h3>料理教室 CUCINA</h3>
-      <p>プロから学ぶ本格的なイタリアン。初心者から上級者まで楽しめるレッスン。</p>
-      <a href="https://example.com" target="_blank">公式サイトを見る</a>
+      <p>本格イタリアンを学べる人気のクラス。</p>
+      <a href="#">公式サイト</a>
+    </div>
+    <div class="card">
+      <h3>ヨガ体験 Harmony</h3>
+      <p>心と体を整える極上リトリート。</p>
+      <a href="#">公式サイト</a>
+    </div>
+    <div class="card">
+      <h3>ホテルペアランチ券</h3>
+      <p>非日常を味わえる高級ホテルのコースランチ。</p>
+      <a href="#">公式サイト</a>
+    </div>
+    <div class="card">
+      <h3>陶芸体験 Atelier土</h3>
+      <p>世界にひとつだけの作品づくり。</p>
+      <a href="#">公式サイト</a>
+    </div>
+    <div class="card">
+      <h3>アロマトリートメント</h3>
+      <p>香りに包まれた極上の癒し時間。</p>
+      <a href="#">公式サイト</a>
+    </div>
+    <div class="card">
+      <h3>和菓子作り体験</h3>
+      <p>四季を感じる繊細なお菓子づくり。</p>
+      <a href="#">公式サイト</a>
+    </div>
+    <div class="card">
+      <h3>写真撮影チケット</h3>
+      <p>記念日を一生の思い出に残すフォトプラン。</p>
+      <a href="#">公式サイト</a>
     </div>
   </section>
 
@@ -160,9 +201,8 @@
     <button type="submit">申し込む</button>
   </form>
 
-  <div class="footer-note">
+  <div class="footer">
     ※ ギフトの送信先は後日ご連絡いたします
   </div>
-
 </body>
 </html>
