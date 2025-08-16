@@ -3,206 +3,79 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Wedding Gift Catalog</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel&family=Noto+Serif+JP&display=swap" rel="stylesheet">
+  <title>REV GYM パーソナルトレーニング</title>
   <style>
     body {
-      margin: 0;
-      font-family: 'Noto Serif JP', serif;
-      background: #fdfcf9;
+      font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", sans-serif;
+      background-color: #fffaf5;
       color: #333;
+      padding: 40px 20px;
+      line-height: 1.8;
     }
 
-    header {
+    h1 {
       text-align: center;
-      padding: 60px 20px 30px;
-      background-color: #fff;
+      font-size: 28px;
+      color: #a98c4a;
+      margin-bottom: 30px;
     }
 
-    header h1 {
-      font-family: 'Cinzel', serif;
-      font-size: 2.5em;
-      color: #d4af37;
-      margin-bottom: 10px;
+    .image-frame img {
+      width: 80%;
+      max-width: 450px;
+      border: 4px solid #e3d8b1;
+      box-shadow: 0 4px 12px rgba(212, 175, 55, 0.15);
+      border-radius: 10px;
+      display: block;
+      margin: 0 auto 30px;
     }
 
-    header p {
-      font-size: 1.1em;
-      color: #555;
+    .info {
+      max-width: 800px;
+      margin: 0 auto;
     }
 
-    .catalog-section {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 30px;
-      padding: 40px;
-    }
-
-    .card {
-      background-color: #fff;
-      border: 1px solid #e3d8b1;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(212, 175, 55, 0.1);
-      padding: 20px;
-      transition: transform 0.3s ease;
-    }
-
-    .card:hover {
-      transform: translateY(-5px);
-    }
-
-    .card h3 {
-      font-family: 'Cinzel', serif;
-      color: #d4af37;
-      font-size: 1.2em;
-      margin-top: 0;
-    }
-
-    .card p {
-      font-size: 0.95em;
-      margin: 10px 0 15px;
-    }
-
-    .card a {
-      display: inline-block;
-      padding: 10px 16px;
-      border: 1px solid #d4af37;
-      color: #d4af37;
-      border-radius: 5px;
-      text-decoration: none;
-      font-weight: bold;
-      transition: all 0.3s ease;
-    }
-
-    .card a:hover {
-      background-color: #d4af37;
-      color: #fff;
-    }
-
-    form {
-      max-width: 500px;
-      margin: 50px auto;
-      background: #fff;
-      border: 1px solid #e3d8b1;
-      border-radius: 12px;
-      padding: 30px;
-      box-shadow: 0 4px 15px rgba(212, 175, 55, 0.1);
-    }
-
-    form h2 {
-      text-align: center;
-      color: #d4af37;
-      font-family: 'Cinzel', serif;
+    .info p {
       margin-bottom: 20px;
     }
 
-    label {
-      display: block;
-      margin-bottom: 8px;
+    .info ul {
+      list-style: none;
+      padding-left: 0;
     }
 
-    input[type="text"] {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 15px;
-      border: 1px solid #d4af37;
-      border-radius: 5px;
-      background-color: #fffaf0;
+    .info li {
+      margin-bottom: 10px;
     }
 
-    button {
-      width: 100%;
-      padding: 12px;
-      background: #d4af37;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      font-size: 1em;
-      cursor: pointer;
-    }
-
-    button:hover {
-      opacity: 0.9;
-    }
-
-    .footer {
-      text-align: center;
-      font-size: 0.9em;
-      padding: 40px 20px;
-      color: #999;
+    .info strong {
+      color: #a98c4a;
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Wedding Gift Catalog</h1>
-    <p>ふたりから、心を込めた贈りものを。</p>
-  </header>
 
-  <section class="catalog-section">
-    <div class="card">
-      <h3>REV GYM（パーソナルトレーニング）</h3>
-      <p>プロの指導で心身を整える、贅沢な自分磨き時間。</p>
-      <a href="rev-gym.html">詳しく見る</a>
-    </div>
-    <div class="card">
-      <h3>エステサロン Elegance</h3>
-      <p>贅沢な癒しを体験できる本格エステコース。</p>
-      <a href="#">公式サイト</a>
-    </div>
-    <div class="card">
-      <h3>料理教室 CUCINA</h3>
-      <p>本格イタリアンを学べる人気のクラス。</p>
-      <a href="#">公式サイト</a>
-    </div>
-    <div class="card">
-      <h3>ヨガ体験 Harmony</h3>
-      <p>心と体を整える極上リトリート。</p>
-      <a href="#">公式サイト</a>
-    </div>
-    <div class="card">
-      <h3>ホテルペアランチ券</h3>
-      <p>非日常を味わえる高級ホテルのコースランチ。</p>
-      <a href="#">公式サイト</a>
-    </div>
-    <div class="card">
-      <h3>陶芸体験 Atelier土</h3>
-      <p>世界にひとつだけの作品づくり。</p>
-      <a href="#">公式サイト</a>
-    </div>
-    <div class="card">
-      <h3>酒のひろせ（地酒セレクト）</h3>
-      <p>岐阜・柳津の老舗酒販店が贈る、極上の地酒ギフト。</p>
-      <a href="https://yanaizu.com/" target="_blank">公式サイト</a>
-    </div>
-    <div class="card">
-      <h3>和菓子作り体験</h3>
-      <p>四季を感じる繊細なお菓子づくり。</p>
-      <a href="#">公式サイト</a>
-    </div>
-    <div class="card">
-      <h3>写真撮影チケット</h3>
-      <p>記念日を一生の思い出に残すフォトプラン。</p>
-      <a href="#">公式サイト</a>
-    </div>
-  </section>
+  <h1>パーソナルトレーニング REV GYM（レヴジム）</h1>
 
-  <form>
-    <h2>ギフト申し込みフォーム</h2>
-    <label for="id">ID（4桁）</label>
-    <input type="text" id="id" name="id" placeholder="例：0001" required>
-
-    <label for="name">お名前</label>
-    <input type="text" id="name" name="name" placeholder="例：山田 太郎" required>
-
-    <label for="gift">ご希望ギフト</label>
-    <input type="text" id="gift" name="gift" placeholder="例：REV GYM パーソナルトレーニング" required>
-
-    <button type="submit">申し込む</button>
-  </form>
-
-  <div class="footer">
-    ※ ギフトの送信先は後日ご連絡いたします
+  <div class="image-frame">
+    <img src="https://tse1.mm.bing.net/th/id/OIP.luP74VgJKc4srWtcc3dHIQHaFK?pid=Api" alt="トレーナーが腰ベルトをサポートするシーン">
   </div>
+
+  <div class="info">
+    <p>
+      体型・姿勢・習慣改善など目的に合わせた完全個別対応。<br>
+      経験豊富なトレーナーが、食事と運動の両面から無理なく健康的にサポートします。<br>
+      回数券や都度払い、通い放題など豊富な料金プラン。<br>
+      ウェディング前の集中ボディメイクにもおすすめです。
+    </p>
+
+    <ul>
+      <li><strong>住所：</strong>岐阜県岐阜市宇佐南2-9-2 cloud2 15号室（※駐車場有）</li>
+      <li><strong>営業時間：</strong>9:00〜22:00（最終受付21:00）</li>
+      <li><strong>定休日：</strong>日曜</li>
+      <li><strong>電話番号：</strong>090-7953-3845</li>
+    </ul>
+  </div>
+
 </body>
 </html>
