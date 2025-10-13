@@ -4,50 +4,25 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Wedding Gift Catalog</title>
-  <!-- ルート調整：index.html と画像が同階層想定 -->
   <base href="./">
   <meta name="robots" content="noindex" />
   <style>
-    /* ---- Base ---- */
     *, *::before, *::after { box-sizing: border-box; }
     html, body { height: 100%; }
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans JP", Roboto, Helvetica, Arial, sans-serif;
-      color: #2d2a26;
-      line-height: 1.6;
-      background-image: url('./top.png') !important; /* 背景を top.png に */
-      background-position: center top;
-      background-repeat: no-repeat;
-      background-size: cover;
-      background-attachment: fixed;
-    }
-    :root{
-      --accent: #4e3b2f;        /* ブラウン */
-      --accent-2: #7a5f4d;      /* 明るいブラウン */
-      --muted: #6b6b6b;
-      --card-bg: #ffffff;
-      --chip-bg: #f4f1ed;
-      --shadow: 0 8px 28px rgba(0,0,0,.08);
-      --radius: 18px;
-      --radius-sm: 12px;
-      --maxw: 1180px;
-    }
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans JP", Roboto, Helvetica, Arial, sans-serif; color: #2d2a26; line-height: 1.6; background-image: url('./top.png'); background-position: center top; background-repeat: no-repeat; background-size: cover; background-attachment: fixed; }
 
-    .wrap{ max-width: var(--maxw); margin: 0 auto; padding: 28px 16px 120px; position: relative; }
+    :root{ --accent:#4e3b2f; --accent-2:#7a5f4d; --muted:#6b6b6b; --card-bg:#ffffff; --chip-bg:#f4f1ed; --shadow:0 8px 28px rgba(0,0,0,.08); --radius:18px; --maxw:1180px; }
 
+    .wrap{ max-width: var(--maxw); margin: 0 auto; padding: 28px 16px 120px; }
     .hero{ text-align: center; margin: 16px auto 28px; }
     .eyebrow{ color: var(--accent-2); letter-spacing: .2em; font-size: 12px; margin: 0; }
     h1{ margin: 8px 0 10px; font-size: clamp(22px, 3.2vw, 34px); letter-spacing: .02em; }
     .lead{ margin: 0 auto; max-width: 860px; color: var(--muted); font-size: 14px; }
 
     .grid{ display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 22px; margin-top: 26px; }
-
     .card{ background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; display: flex; flex-direction: column; }
-
-    .imgwrap{ width: 100%; aspect-ratio: 16/11; background: #f1f3f5; position: relative; overflow: hidden; }
+    .imgwrap{ width: 100%; aspect-ratio: 16/11; background: #f1f3f5; }
     .imgwrap img{ width: 100%; height: 100%; display: block; object-fit: cover; }
-
     .card-body{ padding: 14px 14px 16px; display: flex; flex-direction: column; gap: 10px; }
     .card-head{ display: flex; align-items: center; justify-content: space-between; gap: 8px; }
     .title{ font-size: 18px; margin: 0; }
@@ -58,17 +33,14 @@
     .btn{ appearance: none; border: 1px solid #e1d9d2; background: #fff; color: #3d3833; border-radius: 999px; padding: 10px 12px; font-size: 13px; cursor: pointer; transition: transform .02s ease, background .2s ease, border-color .2s ease; }
     .btn:hover{ background: #faf6f2; }
     .btn:active{ transform: translateY(1px); }
-    .btn.selected-first{ background: var(--accent); border-color: var(--accent); color: #fff; }
+    .btn.selected-first{ background: var(--accent); border-color: var(--accent); color:#fff; }
     .btn.selected-first:hover{ filter: brightness(.95); }
-    .btn.selected-second{ background: var(--accent-2); border-color: var(--accent-2); color: #fff; }
+    .btn.selected-second{ background: var(--accent-2); border-color: var(--accent-2); color:#fff; }
     .btn.selected-second:hover{ filter: brightness(.95); }
-    .btn.selected-first::before, .btn.selected-second::before{ content: "✓"; display:inline-block; margin-right:6px; }
-    .btn.selected{ outline: 2px solid var(--accent); border-color: var(--accent); }
+    .btn.selected-first::before, .btn.selected-second::before{ content:"✓"; display:inline-block; margin-right:6px; }
 
-    /* ---- Sticky selection bar ---- */
     .sticky{ position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; display: flex; justify-content: center; padding: 16px; }
     .sticky-inner{ width: min(var(--maxw), 100%); background: rgba(255,255,255,.96); border: 1px solid #eae5df; backdrop-filter: blur(6px); border-radius: 18px; box-shadow: var(--shadow); padding: 10px; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px; }
-
     .label{ font-size: 11px; color: #7c6f66; letter-spacing: .1em; }
     .chips{ display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
     .chip{ background: var(--chip-bg); border: 1px solid #eae1d7; border-radius: 999px; padding: 8px 12px; display: flex; align-items: center; gap: 8px; }
@@ -77,10 +49,9 @@
 
     .actions{ display: flex; gap: 8px; }
     .btn.ghost{ background: #fff; }
-    .btn.cta{ background: var(--accent); color: #fff; border-color: var(--accent); }
+    .btn.cta{ background: var(--accent); color: #fff; border-color: var(--accent); font-size: 16px; padding: 14px 18px; border-radius: 999px; box-shadow: var(--shadow); }
     .btn.cta:disabled{ background: #b7a9a0; border-color: #b7a9a0; cursor: not-allowed; }
 
-    /* ---- Modal ---- */
     .modal[hidden]{ display:none; }
     .modal{ position: fixed; inset: 0; z-index: 50; }
     .modal-backdrop{ position: absolute; inset: 0; background: rgba(0,0,0,.35); }
@@ -92,13 +63,8 @@
     .formgrid{ display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .formgrid label{ display: grid; gap: 6px; font-size: 13px; }
     .formgrid input, .formgrid textarea{ width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid #e2e2e2; background: #fff; font-size: 14px; }
-    .formgrid textarea{ resize: vertical; }
-    .formgrid .req{ color: #c0392b; font-size: 11px; margin-left: 4px; }
     .form-actions{ display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
-
-    @media (max-width: 720px){
-      .formgrid{ grid-template-columns: 1fr; }
-    }
+    @media (max-width: 720px){ .formgrid{ grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -114,7 +80,6 @@
     </main>
   </div>
 
-  <!-- Sticky selection bar -->
   <div class="sticky" role="complementary" aria-label="選択内容">
     <div class="sticky-inner">
       <div>
@@ -131,30 +96,32 @@
     </div>
   </div>
 
-  <!-- Modal Form -->
   <div class="modal" id="modal" hidden>
     <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true"></div>
     <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialogTitle">
       <button class="close" id="closeModal" aria-label="閉じる">×</button>
       <h2 id="dialogTitle">お申込みフォーム</h2>
       <p class="small">ご入力いただいた内容は安全に送信され、折り返しご連絡いたします（Formspree利用）。</p>
-      <form id=\"orderForm\" action=\"https:\/\/formspree.io\/f\/xgvnnjol\" method=\"POST\" target=\"_blank\">
-        <div class=\"formgrid\">
-          <label>姓 <span class=\"req\">必須<\/span>
-            <input type=\"text\" name=\"last_name\" placeholder=\"例）山田\" required>
-          <\/label>
-          <label>名 <span class=\"req\">必須<\/span>
-            <input type=\"text\" name=\"first_name\" placeholder=\"例）太郎\" required>
-          <\/label>
+      <form id="orderForm" action="https://formspree.io/f/xgvnnjol" method="POST" target="_blank">
+        <div class="formgrid">
+          <label>姓 <span class="req">必須</span>
+            <input type="text" name="last_name" placeholder="例）山田" required>
+          </label>
+          <label>名 <span class="req">必須</span>
+            <input type="text" name="first_name" placeholder="例）太郎" required>
+          </label>
           <label>メールアドレス
-            <input type=\"email\" name=\"email\" placeholder=\"例）taro@example.com\">
-          <\/label>
+            <input type="email" name="email" placeholder="例）taro@example.com">
+          </label>
           <label>電話番号
-            <input type=\"tel\" name=\"phone\" placeholder=\"例）090-1234-5678\">
-          <\/label>
-          <input type=\"hidden\" name=\"first_choice\" id=\"formFirst\">
-          <input type=\"hidden\" name=\"second_choice\" id=\"formSecond\">
-        <\/div>
+            <input type="tel" name="phone" placeholder="例）090-1234-5678">
+          </label>
+          <label>住所
+            <input type="text" name="address" placeholder="例）岐阜県岐阜市…">
+          </label>
+          <input type="hidden" name="first_choice" id="formFirst">
+          <input type="hidden" name="second_choice" id="formSecond">
+        </div>
         <div class="form-actions">
           <button type="submit" class="btn cta">送信する</button>
         </div>
@@ -163,7 +130,6 @@
   </div>
 
   <script>
-    // ---- 商品データ（画像は index.html と同じ階層） ----
     const ITEMS = [
       { name:'白日さん', desc:'桑下さんの日本料理お取り寄せ。丁寧な出汁が沁みる名品。', img:'./1.png' },
       { name:'プルシック', desc:'所シェフの焼き菓子＆生菓子からセレクト。贈り物にも人気のスイーツ。', img:'./2.png' },
@@ -206,14 +172,9 @@
     const state = { first: null, second: null };
 
     function loadState(){
-      try{
-        const s = JSON.parse(localStorage.getItem('wedding2025Selections'));
-        if(s){ state.first = s.first ?? null; state.second = s.second ?? null; }
-      }catch(e){}
+      try{ const s = JSON.parse(localStorage.getItem('wedding2025Selections')); if(s){ state.first = s.first ?? null; state.second = s.second ?? null; } }catch(e){}
     }
-    function saveState(){
-      localStorage.setItem('wedding2025Selections', JSON.stringify(state));
-    }
+    function saveState(){ localStorage.setItem('wedding2025Selections', JSON.stringify(state)); }
 
     function updateSticky(){
       const s1 = document.getElementById('sel1');
@@ -224,11 +185,10 @@
       document.getElementById('formFirst').value = (state.first != null) ? ITEMS[state.first].name : '';
       document.getElementById('formSecond').value = (state.second != null) ? ITEMS[state.second].name : '';
 
-      // 選択中ボタンのハイライト
       document.querySelectorAll('.btn[data-role]').forEach(btn=>{
         const idx = Number(btn.dataset.index);
         const role = btn.dataset.role;
-        btn.classList.remove('selected-first','selected-second','selected');
+        btn.classList.remove('selected-first','selected-second');
         btn.setAttribute('aria-pressed','false');
         if (role === 'first' && state.first === idx) { btn.classList.add('selected-first'); btn.setAttribute('aria-pressed','true'); }
         if (role === 'second' && state.second === idx) { btn.classList.add('selected-second'); btn.setAttribute('aria-pressed','true'); }
@@ -236,36 +196,22 @@
     }
 
     function select(role, idx){
-      // 同一アイテムの重複は避ける（第1に入っているものを第2に入れた場合は第2を空に）
       if(role === 'first' && state.second === idx){ state.second = null; }
       if(role === 'second' && state.first === idx){ state.first = null; }
-      state[role] = idx;
-      saveState();
-      updateSticky();
+      state[role] = idx; saveState(); updateSticky();
     }
 
     function build(){
       ITEMS.forEach((item, idx)=>{ grid.appendChild(makeCard(item, idx)); });
       grid.addEventListener('click', (e)=>{
-        const t = e.target;
-        if(t.matches('.btn[data-role]')){
-          select(t.dataset.role, Number(t.dataset.index));
-        }
+        const t = e.target; if(t.matches('.btn[data-role]')){ select(t.dataset.role, Number(t.dataset.index)); }
       });
-
-      // クリア
-      document.getElementById('clearBtn').addEventListener('click', ()=>{
-        state.first = null; state.second = null; saveState(); updateSticky();
-      });
-
-      // 申込フロー（モーダル開閉）
+      document.getElementById('clearBtn').addEventListener('click', ()=>{ state.first = null; state.second = null; saveState(); updateSticky(); });
       const open = ()=>{ document.getElementById('modal').hidden = false; };
       const close = ()=>{ document.getElementById('modal').hidden = true; };
       document.getElementById('applyBtn').addEventListener('click', open);
       document.getElementById('closeModal').addEventListener('click', close);
       document.getElementById('modalBackdrop').addEventListener('click', close);
-
-      // 送信後、ダイアログは残しておく（target=_blank）。
     }
 
     loadState();
