@@ -22,15 +22,6 @@
       background-size: cover;
       background-attachment: fixed;
     }
-    /* 背景に薄いベールを敷いて文字の視認性UP */
-    body::after{
-      content: "";
-      position: fixed;
-      inset: 0;
-      background: rgba(255,255,255,.72);
-      pointer-events: none;
-    }
-
     :root{
       --accent: #4e3b2f;        /* ブラウン */
       --accent-2: #7a5f4d;      /* 明るいブラウン */
@@ -100,9 +91,6 @@
     .formgrid input, .formgrid textarea{ width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid #e2e2e2; background: #fff; font-size: 14px; }
     .formgrid textarea{ resize: vertical; }
     .formgrid .req{ color: #c0392b; font-size: 11px; margin-left: 4px; }
-    .formgrid label:nth-last-child(3), /* 備考(テキストエリア)を2列に */
-    .formgrid label:nth-last-child(3) textarea{ grid-column: 1 / -1; }
-
     .form-actions{ display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
 
     @media (max-width: 720px){
@@ -147,26 +135,7 @@
       <button class="close" id="closeModal" aria-label="閉じる">×</button>
       <h2 id="dialogTitle">お申込みフォーム</h2>
       <p class="small">ご入力いただいた内容は安全に送信され、折り返しご連絡いたします（Formspree利用）。</p>
-      <form id="orderForm" action="https://formspree.io/f/xgvnnjol" method="POST" target="_blank">
-        <div class="formgrid">
-          <label>お名前 <span class="req">必須</span>
-            <input type="text" name="name" placeholder="例）山田 太郎" required>
-          </label>
-          <label>メールアドレス
-            <input type="email" name="email" placeholder="例）taro@example.com">
-          </label>
-          <label>電話番号
-            <input type="tel" name="phone" placeholder="例）090-1234-5678">
-          </label>
-          <label>ご住所（任意）
-            <input type="text" name="address" placeholder="配送先がある場合はこちらにご記入ください">
-          </label>
-          <label>備考
-            <textarea name="message" rows="3" placeholder="アレルギーや受け取り希望などあればご記入ください"></textarea>
-          </label>
-          <input type="hidden" name="first_choice" id="formFirst">
-          <input type="hidden" name="second_choice" id="formSecond">
-        </div>
+      <form id=\"orderForm\" action=\"https:\/\/formspree.io\/f\/xgvnnjol\" method=\"POST\" target=\"_blank\">\n        <div class=\"formgrid\">\n          <label>姓 <span class=\"req\">必須<\/span>\n            <input type=\"text\" name=\"last_name\" placeholder=\"例）山田\" required>\n          <\/label>\n          <label>名 <span class=\"req\">必須<\/span>\n            <input type=\"text\" name=\"first_name\" placeholder=\"例）太郎\" required>\n          <\/label>\n          <label>メールアドレス\n            <input type=\"email\" name=\"email\" placeholder=\"例）taro@example.com\">\n          <\/label>\n          <label>電話番号\n            <input type=\"tel\" name=\"phone\" placeholder=\"例）090-1234-5678\">\n          <\/label>\n          <input type=\"hidden\" name=\"first_choice\" id=\"formFirst\">\n          <input type=\"hidden\" name=\"second_choice\" id=\"formSecond\">\n        <\/div>
         <div class="form-actions">
           <button type="submit" class="btn cta">送信する</button>
         </div>
@@ -177,7 +146,7 @@
   <script>
     // ---- 商品データ（画像は index.html と同じ階層） ----
     const ITEMS = [
-      { name:'白日さん', desc:'桑下さんの日本料理お取り寄せ。丁寧な出汁が沁みる名品。', img:'./1.png' },
+      { name:'白日さん', desc:'桑下さんの日本料理お取り寄せ。丁寧な仕事が沁みる名品。', img:'./1.png' },
       { name:'プルシック', desc:'所シェフの焼き菓子＆生菓子からセレクト。贈り物にも人気のスイーツ。', img:'./2.png' },
       { name:'八木さんお花ギフト', desc:'TAKANASI 八木さんの季節の花束／アレンジメント。', img:'./3.png' },
       { name:'酒のひろせさん', desc:'広瀬さん厳選。食事に合わせて楽しめる一本。', img:'./4.png' },
