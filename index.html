@@ -49,7 +49,7 @@
 
     .actions{ display: flex; gap: 8px; }
     .btn.ghost{ background: #fff; }
-    .btn.cta{ background: var(--accent); color: #fff; border-color: var(--accent); font-size: 16px; padding: 14px 18px; border-radius: 999px; box-shadow: var(--shadow); }
+    .btn.cta{ background: var(--accent); color: #fff; border-color: var(--accent); font-size: 18px; padding: 16px 22px; border-radius: 999px; box-shadow: var(--shadow); min-width: 230px; }
     .btn.cta:disabled{ background: #b7a9a0; border-color: #b7a9a0; cursor: not-allowed; }
 
     .modal[hidden]{ display:none; }
@@ -62,8 +62,7 @@
 
     .formgrid{ display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .formgrid label{ display: grid; gap: 6px; font-size: 13px; }
-    .formgrid input, .formgrid textarea{ width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid #e2e2e2; background: #fff; font-size: 14px; }
-    .form-actions{ display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
+    \1    .formgrid label.full{ grid-column: 1 / -1; }\n    .form-actions{ display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
     @media (max-width: 720px){ .formgrid{ grid-template-columns: 1fr; } }
   </style>
 </head>
@@ -116,7 +115,7 @@
           <label>電話番号
             <input type="tel" name="phone" placeholder="例）090-1234-5678">
           </label>
-          <label>住所
+          <label class="full">住所
             <input type="text" name="address" placeholder="例）岐阜県岐阜市…">
           </label>
           <input type="hidden" name="first_choice" id="formFirst">
@@ -131,7 +130,7 @@
 
   <script>
     const ITEMS = [
-      { name:'白日', desc:'桑下さんの日本料理お取り寄せ。丁寧な出汁が沁みる名品。', img:'./1.png' },
+ { name:'白日', desc:'桑下さんの日本料理お取り寄せ。丁寧な出汁が沁みる名品。', img:'./1.png' },
       { name:'プルシック', desc:'所シェフの焼き菓子＆生菓子からセレクト。贈り物にも人気のスイーツ。', img:'./2.png' },
       { name:'TAKANASI flower decoration', desc:'八木さんの季節の花束／アレンジメント。', img:'./3.png' },
       { name:'酒のひろせ', desc:'ワインでも日本酒でも。食事に合わせて楽しめる一本。', img:'./4.png' },
@@ -196,7 +195,13 @@
     }
 
     function select(role, idx){
+      // クリックでトグル。既に同じものを選んでいたら解除
+      if (state[role] === idx) { state[role] = null; saveState(); updateSticky(); return; }
+      // 第1と第2が同じアイテムにならないようにする
       if(role === 'first' && state.second === idx){ state.second = null; }
+      if(role === 'second' && state.first === idx){ state.first = null; }
+      state[role] = idx; saveState(); updateSticky();
+    }
       if(role === 'second' && state.first === idx){ state.first = null; }
       state[role] = idx; saveState(); updateSticky();
     }
@@ -207,8 +212,8 @@
         const t = e.target; if(t.matches('.btn[data-role]')){ select(t.dataset.role, Number(t.dataset.index)); }
       });
       document.getElementById('clearBtn').addEventListener('click', ()=>{ state.first = null; state.second = null; saveState(); updateSticky(); });
-      const open = ()=>{ document.getElementById('modal').hidden = false; };
-      const close = ()=>{ document.getElementById('modal').hidden = true; };
+      const open = ()=>{ document.getElementById('modal').hidden = false; document.body.style.overflow='hidden'; };
+      const close = ()=>{ document.getElementById('modal').hidden = true; document.body.style.overflow=''; };
       document.getElementById('applyBtn').addEventListener('click', open);
       document.getElementById('closeModal').addEventListener('click', close);
       document.getElementById('modalBackdrop').addEventListener('click', close);
