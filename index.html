@@ -1,229 +1,286 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>私たちのありがとうを皆様へ | カタログギフトご注文</title>
-  <meta name="description" content="結婚式カタログギフトの第1・第2希望を、写真と説明を見ながらお選びいただけます。" />
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Wedding Gift Catalog</title>
+  <!-- ルート調整：index.html と画像が同階層想定 -->
+  <base href="./">
+  <meta name="robots" content="noindex" />
   <style>
+    /* ---- Base ---- */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans JP", Roboto, Helvetica, Arial, sans-serif;
+      color: #2d2a26;
+      line-height: 1.6;
+      background-image: url('./top.png') !important; /* 背景を top.png に */
+      background-position: center top;
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-attachment: fixed;
+    }
+    /* 背景に薄いベールを敷いて文字の視認性UP */
+    body::after{
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: rgba(255,255,255,.72);
+      pointer-events: none;
+    }
+
     :root{
-      --bg:#F6F1EA;        /* ベージュ */
-      --ink:#3D322B;       /* 濃ブラウン */
-      --gold:#C9A66B;      /* ゴールドベージュ */
-      --panel:#FFFFFFCC;   /* 半透明白 */
+      --accent: #4e3b2f;        /* ブラウン */
+      --accent-2: #7a5f4d;      /* 明るいブラウン */
+      --muted: #6b6b6b;
+      --card-bg: #ffffff;
+      --chip-bg: #f4f1ed;
+      --shadow: 0 8px 28px rgba(0,0,0,.08);
+      --radius: 18px;
+      --radius-sm: 12px;
+      --maxw: 1180px;
     }
-    body{color:var(--ink);}
-    .bg-floral{
-      background-image:
-        radial-gradient(90% 60% at 10% 10%, rgba(201,166,107,0.09), transparent),
-        radial-gradient(80% 50% at 90% 20%, rgba(61,50,43,0.06), transparent),
-        linear-gradient(180deg, rgba(255,255,255,.75), rgba(255,255,255,.9)),
-        url('https://images.unsplash.com/photo-1501594907352-04cda38ebc29?q=80&w=1600&auto=format&fit=crop');
-      background-size:cover;
-      background-position:center;
+
+    .wrap{ max-width: var(--maxw); margin: 0 auto; padding: 28px 16px 120px; position: relative; }
+
+    .hero{ text-align: center; margin: 16px auto 28px; }
+    .eyebrow{ color: var(--accent-2); letter-spacing: .2em; font-size: 12px; margin: 0; }
+    h1{ margin: 8px 0 10px; font-size: clamp(22px, 3.2vw, 34px); letter-spacing: .02em; }
+    .lead{ margin: 0 auto; max-width: 860px; color: var(--muted); font-size: 14px; }
+
+    .grid{ display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 22px; margin-top: 26px; }
+
+    .card{ background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; display: flex; flex-direction: column; }
+
+    .imgwrap{ width: 100%; aspect-ratio: 16/11; background: #f1f3f5; position: relative; overflow: hidden; }
+    .imgwrap img{ width: 100%; height: 100%; display: block; object-fit: cover; }
+
+    .card-body{ padding: 14px 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+    .card-head{ display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .title{ font-size: 18px; margin: 0; }
+    .badge{ background: #f6efe9; color: var(--accent-2); border: 1px solid #ecdcca; padding: 4px 8px; border-radius: 999px; font-size: 11px; white-space: nowrap; }
+    .desc{ margin: 0; color: #4a4a4a; font-size: 13px; line-height: 1.55; min-height: 3.1em; }
+
+    .btns{ display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
+    .btn{ appearance: none; border: 1px solid #e1d9d2; background: #fff; color: #3d3833; border-radius: 999px; padding: 10px 12px; font-size: 13px; cursor: pointer; transition: transform .02s ease, background .2s ease, border-color .2s ease; }
+    .btn:hover{ background: #faf6f2; }
+    .btn:active{ transform: translateY(1px); }
+    .btn.primary{ background: var(--accent); border-color: var(--accent); color: #fff; }
+    .btn.primary:hover{ background: #3f3026; }
+    .btn.selected{ outline: 2px solid var(--accent); border-color: var(--accent); }
+
+    /* ---- Sticky selection bar ---- */
+    .sticky{ position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; display: flex; justify-content: center; padding: 16px; }
+    .sticky-inner{ width: min(var(--maxw), 100%); background: rgba(255,255,255,.96); border: 1px solid #eae5df; backdrop-filter: blur(6px); border-radius: 18px; box-shadow: var(--shadow); padding: 10px; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px; }
+
+    .label{ font-size: 11px; color: #7c6f66; letter-spacing: .1em; }
+    .chips{ display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+    .chip{ background: var(--chip-bg); border: 1px solid #eae1d7; border-radius: 999px; padding: 8px 12px; display: flex; align-items: center; gap: 8px; }
+    .chip span{ font-size: 11px; color: #7f6f63; background: #fff; border: 1px solid #eae1d7; border-radius: 999px; padding: 2px 8px; }
+    .chip strong{ font-size: 13px; }
+
+    .actions{ display: flex; gap: 8px; }
+    .btn.ghost{ background: #fff; }
+    .btn.cta{ background: var(--accent); color: #fff; border-color: var(--accent); }
+    .btn.cta:disabled{ background: #b7a9a0; border-color: #b7a9a0; cursor: not-allowed; }
+
+    /* ---- Modal ---- */
+    .modal[hidden]{ display:none; }
+    .modal{ position: fixed; inset: 0; z-index: 50; }
+    .modal-backdrop{ position: absolute; inset: 0; background: rgba(0,0,0,.35); }
+    .dialog{ position: relative; z-index: 1; background: #fff; width: min(760px, calc(100% - 24px)); margin: 6vh auto; border-radius: 16px; box-shadow: var(--shadow); padding: 16px; }
+    .dialog h2{ margin: 6px 0 4px; font-size: 22px; }
+    .dialog .small{ color: #6c6c6c; font-size: 12px; margin: 0 0 10px; }
+    .close{ position: absolute; right: 10px; top: 10px; border: none; background: #f4f4f4; border-radius: 999px; width: 32px; height: 32px; cursor: pointer; font-size: 18px; }
+
+    .formgrid{ display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .formgrid label{ display: grid; gap: 6px; font-size: 13px; }
+    .formgrid input, .formgrid textarea{ width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid #e2e2e2; background: #fff; font-size: 14px; }
+    .formgrid textarea{ resize: vertical; }
+    .formgrid .req{ color: #c0392b; font-size: 11px; margin-left: 4px; }
+    .formgrid label:nth-last-child(3), /* 備考(テキストエリア)を2列に */
+    .formgrid label:nth-last-child(3) textarea{ grid-column: 1 / -1; }
+
+    .form-actions{ display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
+
+    @media (max-width: 720px){
+      .formgrid{ grid-template-columns: 1fr; }
     }
-    .heading{letter-spacing:.08em; font-family:"Georgia", serif; color:var(--ink)}
-    .gold{color:var(--gold)}
-    .btn{border-radius:9999px; padding:.6rem 1rem; font-weight:600}
-    .btn-main{background:var(--ink); color:white}
-    .btn-main:hover{background:var(--gold); color:var(--ink)}
-    .btn-ghost{border:1px solid var(--ink); color:var(--ink)}
-    .btn-ghost:hover{border-color:var(--gold); color:var(--ink)}
-    .card{background:var(--panel); backdrop-filter: blur(6px);}
-    .sticky-cta{position:sticky; bottom:0; backdrop-filter: blur(8px);}
-    .badge{border:1px solid rgba(0,0,0,.1); padding:.125rem .5rem; border-radius:9999px; font-size:.75rem}
   </style>
 </head>
-<body class="min-h-screen bg-floral">
-  <!-- HERO -->
-  <header class="max-w-5xl mx-auto px-6 pt-14 pb-8 text-center">
-    <p class="text-xs tracking-[.25em] gold">THANK YOU</p>
-    <h1 class="mt-2 text-3xl md:text-5xl font-semibold heading">私たちのありがとうを皆様へ</h1>
-    <p class="mt-4 text-base md:text-lg leading-relaxed">今回は、私たちが普段お世話になっている方々の商品を中心に、カタログギフトとしてご用意しました。<br class="hidden md:inline"/>写真と説明をご覧のうえ、第1・第2希望をお選びください。</p>
-  </header>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <p class="eyebrow">THANK YOU</p>
+      <h1>私たちのありがとうを皆様へ</h1>
+      <p class="lead">今回は、私たちが普段お世話になっている方々の商品を中心に、カタログギフトとしてご用意しました。写真と説明をご覧のうえ、<strong>第1・第2希望</strong>をお選びください。</p>
+    </header>
 
-  <!-- LIST GRID -->
-  <main class="max-w-6xl mx-auto px-6 pb-20">
-    <section id="catalog" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      <!-- JSでカードを生成 -->
-    </section>
+    <main>
+      <section id="grid" class="grid" aria-label="ギフト一覧"></section>
+    </main>
+  </div>
 
-    <!-- YOUR SELECTION -->
-    <section class="sticky-cta z-10 mt-8">
-      <div class="card rounded-3xl shadow-lg border border-[color:var(--gold)]/30 p-4 md:p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-        <div>
-          <p class="text-xs gold tracking-wider">YOUR SELECTION</p>
-          <div class="mt-1 text-sm md:text-base">
-            <span class="badge mr-2">第1希望</span><span id="sel1" class="font-medium">未選択</span>
-            <span class="badge ml-4 mr-2">第2希望</span><span id="sel2" class="font-medium">未選択</span>
-          </div>
-        </div>
-        <div class="flex items-center gap-3">
-          <button id="clearBtn" class="btn btn-ghost" type="button">クリア</button>
-          <a href="#order" class="btn btn-main">情報を入力して申し込む</a>
+  <!-- Sticky selection bar -->
+  <div class="sticky" role="complementary" aria-label="選択内容">
+    <div class="sticky-inner">
+      <div>
+        <div class="label">YOUR SELECTION</div>
+        <div class="chips">
+          <div class="chip" aria-live="polite"><span>第1希望</span><strong id="sel1">未選択</strong></div>
+          <div class="chip" aria-live="polite"><span>第2希望</span><strong id="sel2">未選択</strong></div>
         </div>
       </div>
-    </section>
+      <div class="actions">
+        <button class="btn ghost" id="clearBtn" type="button">クリア</button>
+        <button class="btn cta" id="applyBtn" type="button" disabled>情報を入力して申し込む</button>
+      </div>
+    </div>
+  </div>
 
-    <!-- FORM -->
-    <section id="order" class="mt-12">
-      <form id="orderForm" class="card rounded-3xl shadow-lg p-8 border border-[color:var(--gold)]/30 max-w-3xl mx-auto">
-        <h2 class="text-2xl font-semibold text-center heading gold mb-6">ご注文フォーム</h2>
-        <input type="hidden" name="choice1" id="choice1" />
-        <input type="hidden" name="choice2" id="choice2" />
-
-        <div class="grid md:grid-cols-2 gap-5">
-          <div>
-            <label class="block text-sm font-medium">お名前（姓）<span class="text-rose-600">＊</span></label>
-            <input type="text" name="last_name" required class="mt-1 w-full rounded-xl border-slate-300 focus:border-[color:var(--gold)] focus:ring-[color:var(--gold)]" />
-          </div>
-          <div>
-            <label class="block text-sm font-medium">お名前（名）<span class="text-rose-600">＊</span></label>
-            <input type="text" name="first_name" required class="mt-1 w-full rounded-xl border-slate-300 focus:border-[color:var(--gold)] focus:ring-[color:var(--gold)]" />
-          </div>
-          <div>
-            <label class="block text-sm font-medium">メールアドレス<span class="text-rose-600">＊</span></label>
-            <input type="email" name="email" required class="mt-1 w-full rounded-xl border-slate-300 focus:border-[color:var(--gold)] focus:ring-[color:var(--gold)]" />
-          </div>
-          <div>
-            <label class="block text-sm font-medium">電話番号<span class="text-rose-600">＊</span></label>
-            <input type="tel" name="tel" inputmode="tel" required class="mt-1 w-full rounded-xl border-slate-300 focus:border-[color:var(--gold)] focus:ring-[color:var(--gold)]" />
-          </div>
-          <div class="md:col-span-2">
-            <label class="block text-sm font-medium">住所（任意）</label>
-            <input type="text" name="address" placeholder="例：岐阜県岐阜市◯◯1-2-3" class="mt-1 w-full rounded-xl border-slate-300 focus:border-[color:var(--gold)] focus:ring-[color:var(--gold)]" />
-          </div>
+  <!-- Modal Form -->
+  <div class="modal" id="modal" hidden>
+    <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true"></div>
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialogTitle">
+      <button class="close" id="closeModal" aria-label="閉じる">×</button>
+      <h2 id="dialogTitle">お申込みフォーム</h2>
+      <p class="small">ご入力いただいた内容は安全に送信され、折り返しご連絡いたします（Formspree利用）。</p>
+      <form id="orderForm" action="https://formspree.io/f/xgvnnjol" method="POST" target="_blank">
+        <div class="formgrid">
+          <label>お名前 <span class="req">必須</span>
+            <input type="text" name="name" placeholder="例）山田 太郎" required>
+          </label>
+          <label>メールアドレス
+            <input type="email" name="email" placeholder="例）taro@example.com">
+          </label>
+          <label>電話番号
+            <input type="tel" name="phone" placeholder="例）090-1234-5678">
+          </label>
+          <label>ご住所（任意）
+            <input type="text" name="address" placeholder="配送先がある場合はこちらにご記入ください">
+          </label>
+          <label>備考
+            <textarea name="message" rows="3" placeholder="アレルギーや受け取り希望などあればご記入ください"></textarea>
+          </label>
+          <input type="hidden" name="first_choice" id="formFirst">
+          <input type="hidden" name="second_choice" id="formSecond">
         </div>
-
-        <div class="mt-6 flex items-start gap-3">
-          <input id="agree" type="checkbox" class="mt-1" required />
-          <label for="agree" class="text-sm">入力内容に間違いがないこと、在庫状況により第2希望をご用意する場合があることに同意します。</label>
+        <div class="form-actions">
+          <button type="submit" class="btn cta">送信する</button>
         </div>
-
-        <div class="mt-8 text-center">
-          <button id="submitBtn" type="submit" class="btn btn-main">申し込む</button>
-          <p id="status" class="text-sm mt-3"></p>
-        </div>
-        <p class="mt-4 text-xs text-center opacity-70">個人情報は本ギフトの手配以外の目的には使用しません。</p>
       </form>
-    </section>
-  </main>
-
-  <footer class="max-w-5xl mx-auto px-6 pb-12 text-center text-sm opacity-80">
-    <p>お問い合わせ：<a href="mailto:info@example.jp" class="underline">info@example.jp</a> ／ TEL: 000-0000-0000</p>
-    <p class="mt-2">© 2025 Wedding Catalog</p>
-  </footer>
+    </div>
+  </div>
 
   <script>
-// ---- 商品データ（写真URLは差し替え可：未設定はプレースホルダー） ----
-const ITEMS = [
-  { name:'白日さん', desc:'桑下さんの日本料理お取り寄せ。丁寧な出汁が沁みる名品。', img:'./1.png' },      
-  { name:'プルシック', desc:'所シェフの焼き菓子＆生菓子からセレクト。贈り物にも人気のスイーツ。', img:'./2.png' },
-  { name:'八木さんお花ギフト', desc:'TAKANASI 八木さんの季節の花束／アレンジメント。', img:'./3.png' },      
-  { name:'酒のひろせさん', desc:'広瀬さん厳選。食事に合わせて楽しめる一本。', img:'./4.png' },
-  { name:'ヒュッゲ珈琲さん', desc:'自家焙煎コーヒー豆と焼き菓子のセット。', img:'./5.png' },
-  { name:'トマトギフト', desc:'細野ファーム自慢の甘いトマトを詰め合わせ。', img:'./6.png' },
-  { name:'東さんパーソナルレッスン', desc:'REV 東さんのトレーニング2回チケット。', img:'./7.png' },
-  { name:'真衣さんオイルマッサージ', desc:'POLA Juair-Amor 真衣さんのオイルマッサージ。', img:'./8.png' },
-  { name:'プロゴルフレッスン', desc:'ユニバーサルゴルフラウンジにてプロによるマンツーマン。', img:'./9.png' },
-  { name:'志津ママのお店', desc:'春あかり（来春オープン）で使えるお食事券。', img:'./10.png' },
-  { name:'知佳さんカット＋ヘッドスパ', desc:'Lino\'a 知佳さんによるカット＆癒しのヘッドスパ。', img:'./11.png' },
-  { name:'プロフ写真/家族写真撮影', desc:'スタジオ1989 エイコさんの撮影。記念の一枚を。', img:'./12.png' },
-];
+    // ---- 商品データ（画像は index.html と同じ階層） ----
+    const ITEMS = [
+      { name:'白日さん', desc:'桑下さんの日本料理お取り寄せ。丁寧な出汁が沁みる名品。', img:'./1.png' },
+      { name:'プルシック', desc:'所シェフの焼き菓子＆生菓子からセレクト。贈り物にも人気のスイーツ。', img:'./2.png' },
+      { name:'八木さんお花ギフト', desc:'TAKANASI 八木さんの季節の花束／アレンジメント。', img:'./3.png' },
+      { name:'酒のひろせさん', desc:'広瀬さん厳選。食事に合わせて楽しめる一本。', img:'./4.png' },
+      { name:'ヒュッゲ珈琲さん', desc:'自家焙煎コーヒー豆と焼き菓子のセット。', img:'./5.png' },
+      { name:'トマトギフト', desc:'細野ファーム自慢の甘いトマトを詰め合わせ。', img:'./6.png' },
+      { name:'東さんパーソナルレッスン', desc:'REV 東さんのトレーニング2回チケット。', img:'./7.png' },
+      { name:'真衣さんオイルマッサージ', desc:'POLA Juair-Amor 真衣さんのオイルマッサージ。', img:'./8.png' },
+      { name:'プロゴルフレッスン', desc:'ユニバーサルゴルフラウンジにてプロによるマンツーマン。', img:'./9.png' },
+      { name:'志津ママのお店', desc:'春あかり（来春オープン）で使えるお食事券。', img:'./10.png' },
+      { name:'知佳さんカット＋ヘッドスパ', desc:"Lino'a 知佳さんによるカット＆癒しのヘッドスパ。", img:'./11.png' },
+      { name:'プロフ写真/家族写真撮影', desc:'スタジオ1989 エイコさんの撮影。記念の一枚を。', img:'./12.png' },
+    ];
 
-    // 画像プレースホルダー
-    const ph = 'https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1200&auto=format&fit=crop';
+    const grid = document.getElementById('grid');
 
-    const grid = document.getElementById('catalog');
-    const sel1 = document.getElementById('sel1');
-    const sel2 = document.getElementById('sel2');
-    const choice1 = document.getElementById('choice1');
-    const choice2 = document.getElementById('choice2');
-
-    // カードUI生成
-    ITEMS.forEach((item)=>{
+    function makeCard(item, index){
       const el = document.createElement('article');
-      el.className = 'card rounded-3xl overflow-hidden shadow-md hover:shadow-xl transition border border-black/5';
+      el.className = 'card';
       el.innerHTML = `
-        <div class="aspect-[4/3] w-full overflow-hidden bg-white">
-          <img src="${item.img || ph}" alt="${item.name}" class="w-full h-full object-cover"/>
+        <div class="imgwrap">
+          <img src="${item.img}" alt="${item.name}">
         </div>
-        <div class="p-5">
-          <div class="flex items-center justify-between">
-            <h3 class="font-semibold text-lg">${item.name}</h3>
+        <div class="card-body">
+          <div class="card-head">
+            <h3 class="title">${item.name}</h3>
             <span class="badge">選べるギフト</span>
           </div>
-          <p class="mt-2 text-sm opacity-80">${item.desc}</p>
-          <div class="mt-4 grid grid-cols-2 gap-2">
-            <button class="btn btn-ghost w-full" data-act="c1" data-name="${item.name}">第1希望にする</button>
-            <button class="btn btn-main w-full" data-act="c2" data-name="${item.name}">第2希望にする</button>
+          <p class="desc">${item.desc}</p>
+          <div class="btns">
+            <button class="btn primary" data-role="first" data-index="${index}">第1希望にする</button>
+            <button class="btn" data-role="second" data-index="${index}">第2希望にする</button>
           </div>
-        </div>`;
-      grid.appendChild(el);
-    });
+        </div>
+      `;
+      return el;
+    }
 
-    // 選択ハンドラ
-    grid.addEventListener('click', (e)=>{
-      const btn = e.target.closest('button[data-act]');
-      if(!btn) return;
-      const name = btn.dataset.name;
-      if(btn.dataset.act==='c1'){
-        choice1.value = name; sel1.textContent = name;
-        // 1と2が同じなら2を空に
-        if(choice2.value===name){ choice2.value=''; sel2.textContent='未選択'; }
-      } else {
-        choice2.value = name; sel2.textContent = name;
-        if(choice1.value===name){ choice1.value=''; sel1.textContent='未選択'; }
-      }
-      window.location.hash = '#orderForm';
-    });
+    const state = { first: null, second: null };
 
-    document.getElementById('clearBtn').addEventListener('click', ()=>{
-      choice1.value=''; sel1.textContent='未選択';
-      choice2.value=''; sel2.textContent='未選択';
-    });
-
-    // 送信
-    const ENDPOINT_URL = '';// ← GAS等のWebエンドポイントを設定
-
-    document.getElementById('orderForm').addEventListener('submit', async (e)=>{
-      e.preventDefault();
-      const status = document.getElementById('status');
-      const btn = document.getElementById('submitBtn');
-      status.textContent='';
-
-      // 最低限のバリデーション
-      if(!choice1.value && !choice2.value){
-        alert('第1または第2希望をお選びください。');
-        return;
-      }
-
-      const fd = new FormData(e.target);
-      const payload = Object.fromEntries(fd.entries());
-      payload.timestamp = new Date().toISOString();
-
-      if(!ENDPOINT_URL){
-        alert('送信先（ENDPOINT_URL）が未設定です。Google Apps ScriptのURLを設定してください。');
-        return;
-      }
-
+    function loadState(){
       try{
-        btn.disabled = true; btn.classList.add('opacity-60');
-        status.textContent = '送信中…';
-        const res = await fetch(ENDPOINT_URL, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)});
-        if(!res.ok) throw new Error('network');
-        status.textContent = '送信が完了しました。ご入力ありがとうございました。';
-        e.target.reset();
-        choice1.value=''; sel1.textContent='未選択';
-        choice2.value=''; sel2.textContent='未選択';
-      }catch(err){
-        console.error(err);
-        status.textContent = '送信に失敗しました。時間をおいて再度お試しください。';
-      }finally{
-        btn.disabled = false; btn.classList.remove('opacity-60');
-      }
-    });
+        const s = JSON.parse(localStorage.getItem('wedding2025Selections'));
+        if(s){ state.first = s.first ?? null; state.second = s.second ?? null; }
+      }catch(e){}
+    }
+    function saveState(){
+      localStorage.setItem('wedding2025Selections', JSON.stringify(state));
+    }
+
+    function updateSticky(){
+      const s1 = document.getElementById('sel1');
+      const s2 = document.getElementById('sel2');
+      s1.textContent = (state.first != null) ? ITEMS[state.first].name : '未選択';
+      s2.textContent = (state.second != null) ? ITEMS[state.second].name : '未選択';
+      document.getElementById('applyBtn').disabled = !(state.first != null && state.second != null);
+      document.getElementById('formFirst').value = (state.first != null) ? ITEMS[state.first].name : '';
+      document.getElementById('formSecond').value = (state.second != null) ? ITEMS[state.second].name : '';
+
+      // 選択中ボタンのハイライト
+      document.querySelectorAll('.btn[data-role]').forEach(btn=>{
+        const idx = Number(btn.dataset.index);
+        const role = btn.dataset.role;
+        btn.classList.remove('selected');
+        if (role === 'first' && state.first === idx) btn.classList.add('selected');
+        if (role === 'second' && state.second === idx) btn.classList.add('selected');
+      });
+    }
+
+    function select(role, idx){
+      // 同一アイテムの重複は避ける（第1に入っているものを第2に入れた場合は第2を空に）
+      if(role === 'first' && state.second === idx){ state.second = null; }
+      if(role === 'second' && state.first === idx){ state.first = null; }
+      state[role] = idx;
+      saveState();
+      updateSticky();
+    }
+
+    function build(){
+      ITEMS.forEach((item, idx)=>{ grid.appendChild(makeCard(item, idx)); });
+      grid.addEventListener('click', (e)=>{
+        const t = e.target;
+        if(t.matches('.btn[data-role]')){
+          select(t.dataset.role, Number(t.dataset.index));
+        }
+      });
+
+      // クリア
+      document.getElementById('clearBtn').addEventListener('click', ()=>{
+        state.first = null; state.second = null; saveState(); updateSticky();
+      });
+
+      // 申込フロー（モーダル開閉）
+      const open = ()=>{ document.getElementById('modal').hidden = false; };
+      const close = ()=>{ document.getElementById('modal').hidden = true; };
+      document.getElementById('applyBtn').addEventListener('click', open);
+      document.getElementById('closeModal').addEventListener('click', close);
+      document.getElementById('modalBackdrop').addEventListener('click', close);
+
+      // 送信後、ダイアログは残しておく（target=_blank）。
+    }
+
+    loadState();
+    document.addEventListener('DOMContentLoaded', ()=>{ build(); updateSticky(); });
   </script>
 </body>
 </html>
