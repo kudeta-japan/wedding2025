@@ -9,9 +9,28 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; }
     html, body { height: 100%; }
-    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans JP", Roboto, Helvetica, Arial, sans-serif; color: #2d2a26; line-height: 1.6; background-image: url('./top.png'); background-position: center top; background-repeat: no-repeat; background-size: cover; background-attachment: fixed; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans JP", Roboto, Helvetica, Arial, sans-serif;
+      color: #2d2a26;
+      line-height: 1.6;
+      background-image: url('./top.png');
+      background-position: center top;
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-attachment: fixed;
+    }
 
-    :root{ --accent:#4e3b2f; --accent-2:#7a5f4d; --muted:#6b6b6b; --card-bg:#ffffff; --chip-bg:#f4f1ed; --shadow:0 8px 28px rgba(0,0,0,.08); --radius:18px; --maxw:1180px; }
+    :root{
+      --accent:#4e3b2f;
+      --accent-2:#7a5f4d;
+      --muted:#6b6b6b;
+      --card-bg:#ffffff;
+      --chip-bg:#f4f1ed;
+      --shadow:0 8px 28px rgba(0,0,0,.08);
+      --radius:18px;
+      --maxw:1180px;
+    }
 
     .wrap{ max-width: var(--maxw); margin: 0 auto; padding: 28px 16px 120px; }
     .hero{ text-align: center; margin: 16px auto 28px; }
@@ -22,7 +41,7 @@
     .grid{ display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 22px; margin-top: 26px; }
     .card{ background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; display: flex; flex-direction: column; }
 
-    /* すべてのカードで画像サイズを統一（比率固定＋crop） */
+    /* 画像サイズ統一（比率固定＋トリミング） */
     .imgwrap{ width: 100%; aspect-ratio: 16 / 11; background: #f1f3f5; position: relative; overflow: hidden; }
     .imgwrap img{ width: 100%; height: 100%; display: block; object-fit: cover; object-position: center 30%; }
 
@@ -33,7 +52,11 @@
     .desc{ margin: 0; color: #4a4a4a; font-size: 13px; line-height: 1.55; min-height: 3.1em; }
 
     .btns{ display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
-    .btn{ appearance: none; border: 1px solid #e1d9d2; background: #fff; color: #3d3833; border-radius: 999px; padding: 10px 12px; font-size: 13px; cursor: pointer; transition: transform .02s ease, background .2s ease, border-color .2s ease; }
+    .btn{
+      appearance: none; border: 1px solid #e1d9d2; background: #fff; color: #3d3833;
+      border-radius: 999px; padding: 10px 12px; font-size: 13px; cursor: pointer;
+      transition: transform .02s ease, background .2s ease, border-color .2s ease;
+    }
     .btn:hover{ background: #faf6f2; }
     .btn:active{ transform: translateY(1px); }
     .btn.selected-first{ background: var(--accent); border-color: var(--accent); color:#fff; }
@@ -42,19 +65,26 @@
     .btn.selected-second:hover{ filter: brightness(.95); }
     .btn.selected-first::before, .btn.selected-second::before{ content:"✓"; display:inline-block; margin-right:6px; }
 
+    /* ---- Sticky selection bar ---- */
     .sticky{ position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; display: flex; justify-content: center; padding: 16px; }
-    .sticky-inner{ width: min(var(--maxw), 100%); background: rgba(255,255,255,.96); border: 1px solid #eae5df; backdrop-filter: blur(6px); border-radius: 18px; box-shadow: var(--shadow); padding: 10px; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px; }
+    .sticky-inner{
+      width: min(var(--maxw), 100%); background: rgba(255,255,255,.96); border: 1px solid #eae5df;
+      backdrop-filter: blur(6px); border-radius: 18px; box-shadow: var(--shadow);
+      padding: 12px; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px;
+    }
     .label{ font-size: 11px; color: #7c6f66; letter-spacing: .1em; }
-    .chips{ display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
-    .chip{ background: var(--chip-bg); border: 1px solid #eae1d7; border-radius: 999px; padding: 8px 12px; display: flex; align-items: center; gap: 8px; }
-    .chip span{ font-size: 11px; color: #7f6f63; background: #fff; border: 1px solid #eae1d7; border-radius: 999px; padding: 2px 8px; }
-    .chip strong{ font-size: 13px; }
+
+    /* 明確な第1・第2の行表示 */
+    .selgroup{ display: grid; grid-template-columns: auto 1fr; row-gap: 6px; column-gap: 12px; margin-top: 6px; }
+    .selname{ font-size: 12px; color:#6f5b4b; background:#efe7df; border:1px solid #e2d7cb; padding: 2px 8px; border-radius: 999px; align-self:center; }
+    .selval{ display:inline-block; background: var(--chip-bg); border: 1px solid #eae1d7; border-radius: 999px; padding: 8px 12px; font-weight: 600; min-width: 6em; text-align: center; }
 
     .actions{ display: flex; gap: 8px; }
     .btn.ghost{ background: #fff; }
-    .btn.cta{ background: var(--accent); color: #fff; border-color: var(--accent); font-size: 18px; padding: 16px 22px; border-radius: 999px; box-shadow: var(--shadow); min-width: 230px; }
+    .btn.cta{ background: var(--accent); color: #fff; border-color: var(--accent); font-size: 16px; padding: 14px 18px; border-radius: 999px; box-shadow: var(--shadow); min-width: 230px; }
     .btn.cta:disabled{ background: #b7a9a0; border-color: #b7a9a0; cursor: not-allowed; }
 
+    /* ---- Modal ---- */
     .modal[hidden]{ display:none; }
     .modal{ position: fixed; inset: 0; z-index: 50; }
     .modal-backdrop{ position: absolute; inset: 0; background: rgba(0,0,0,.35); }
@@ -65,89 +95,28 @@
 
     .formgrid{ display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .formgrid label{ display: grid; gap: 6px; font-size: 13px; }
-    .formgrid input, .formgrid textarea{ width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid #e2e2e2; background: #fff; font-size: 14px; }
+    .formgrid input{ width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid #e2e2e2; background: #fff; font-size: 14px; }
     .formgrid label.full{ grid-column: 1 / -1; }
     .form-actions{ display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
-    @media (max-width: 720px){ .formgrid{ grid-template-columns: 1fr; } }
 
     /* ---- Mobile tweaks ---- */
+    @media (max-width: 720px){ .formgrid{ grid-template-columns: 1fr; } }
+
     @media (max-width: 600px){
       /* 画像は少し縦長に（人物が切れにくい） */
       .imgwrap{ aspect-ratio: 4 / 3; }
 
-      /* ---- Sticky bar (mobile) ---- */
+      /* Sticky bar */
       .wrap{ padding-bottom: 160px; }
       .sticky-inner{ grid-template-columns: 1fr auto; gap: 8px; padding: 8px; }
       .label{ font-size: 10px; }
-      .chips{ gap: 6px; }
-      .chip{ padding: 6px 10px; border-radius: 12px; }
-      .chip span{ display:inline-block; font-size:11px; padding:2px 6px; border-radius:999px; background:#efe7df; border:1px solid #e2d7cb; color:#6f5b4b; margin-right:6px; }
-      .chips .chip:nth-child(1) span{ background:#eadfd4; }
-      .chips .chip:nth-child(2) span{ background:#e8e2da; }
-      .chip strong{ font-size:14px; }
+      .selname{ font-size: 11px; padding: 2px 6px; }
+      .selval{ padding: 8px 10px; }
 
       .actions{ gap: 6px; align-items: center; }
       .btn.ghost{ padding: 8px 10px; font-size: 13px; }
-      /* CTA: はみ出さない・中央揃え */
+      /* CTA: はみ出さない・中央揃え（最大幅220px） */
       .btn.cta{ width: 100%; max-width: 220px; margin: 0 auto; font-size: 13px; padding: 10px 14px; border-radius: 20px; box-sizing: border-box; }
-    }
-
-      /* ---- Sticky bar (mobile) ---- */
-      .wrap{ padding-bottom: 160px; }
-      .sticky-inner{ grid-template-columns: 1fr auto; gap: 8px; padding: 8px; }
-      .label{ font-size: 10px; }
-      .chips{ gap: 6px; }
-      .chip{ padding: 6px 10px; border-radius: 12px; }
-      .chip span{ display:inline-block; font-size:11px; padding:2px 6px; border-radius:999px; background:#efe7df; border:1px solid #e2d7cb; color:#6f5b4b; margin-right:6px; }
-      /* 第1と第2で色を少し変える */
-      .chips .chip:nth-child(1) span{ background:#eadfd4; }
-      .chips .chip:nth-child(2) span{ background:#e8e2da; }
-      .chip strong{ font-size:14px; }
-
-      .actions{ gap: 6px; align-items: center; }
-      .btn.ghost{ padding: 8px 10px; font-size: 13px; }
-      /* CTA をさらに小さく＆幅を自動に */
-      .btn.cta{ min-width: auto; width: auto; font-size: 13px; padding: 8px 12px; border-radius: 16px; }
-    }
-
-      /* スティッキーバーをコンパクトに＆第1/第2を明確に */
-      .wrap{ padding-bottom: 180px; }
-      .sticky-inner{ grid-template-columns: 1fr; gap: 8px; padding: 8px; }
-      .chips{ gap: 8px; }
-      .chip{ padding: 8px 10px; border-radius: 12px; }
-      .chip span{ display:inline-block; font-size:11px; padding:2px 6px; border-radius:999px; background:#f0ebe6; border:1px solid #e3d8cd; color:#6f5b4b; }
-      .chip strong{ font-size:14px; }
-
-      .actions{ gap: 6px; }
-      .btn.ghost{ padding: 8px 10px; }
-      /* CTA を少し小さく */
-      .btn.cta{ min-width: 100%; font-size: 14px; padding: 10px 12px; }
-    }
-      .imgwrap img{ object-position: center 25%; }
-
-      /* スティッキーバーをもっとコンパクトに */
-      .wrap{ padding-bottom: 260px; }
-      .sticky{ padding: 12px; }
-      .sticky-inner{ grid-template-columns: 1fr; gap: 6px; padding: 8px 10px; border-radius: 14px; }
-      .label{ font-size: 10px; }
-      .chips{ gap: 6px; }
-      .chip{ padding: 6px 10px; border-radius: 12px; }
-      .chip span{ display: none; }
-      .chip strong{ font-size: 12px; }
-      .actions{ gap: 6px; }
-      .btn.ghost{ padding: 8px 10px; font-size: 13px; }
-      .btn.cta{ min-width: 100%; font-size: 16px; padding: 12px 14px; }
-    }
-
-      /* スティッキーバーをコンパクトに */
-      .wrap{ padding-bottom: 180px; }
-      .sticky-inner{ grid-template-columns: 1fr; gap: 8px; padding: 8px; }
-      .chips{ gap: 6px; }
-      .chip{ padding: 6px 8px; border-radius: 12px; }
-      .chip span{ display: none; } /* 第1/第2ラベルは省略し、内容のみ表示 */
-      .actions{ gap: 6px; }
-      .btn.ghost{ padding: 8px 10px; }
-      .btn.cta{ min-width: 100%; font-size: 16px; padding: 12px 14px; }
     }
   </style>
 </head>
@@ -164,13 +133,16 @@
     </main>
   </div>
 
+  <!-- Sticky selection bar -->
   <div class="sticky" role="complementary" aria-label="選択内容">
     <div class="sticky-inner">
       <div>
         <div class="label">YOUR SELECTION</div>
-        <div class="chips">
-          <div class="chip" aria-live="polite"><span>第1希望</span><strong id="sel1">未選択</strong></div>
-          <div class="chip" aria-live="polite"><span>第2希望</span><strong id="sel2">未選択</strong></div>
+        <div class="selgroup">
+          <span class="selname">第1希望</span>
+          <span class="selval" id="sel1">未選択</span>
+          <span class="selname">第2希望</span>
+          <span class="selval" id="sel2">未選択</span>
         </div>
       </div>
       <div class="actions">
@@ -180,6 +152,7 @@
     </div>
   </div>
 
+  <!-- Modal Form -->
   <div class="modal" id="modal" hidden>
     <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true"></div>
     <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialogTitle">
@@ -214,6 +187,7 @@
   </div>
 
   <script>
+    // ---- 商品データ ----
     const ITEMS = [
       { name:'白日', desc:'桑下さんの日本料理お取り寄せ。丁寧な出汁が沁みる名品。', img:'./1.png' },
       { name:'プルシック', desc:'所シェフの焼き菓子＆生菓子からセレクト。贈り物にも人気のスイーツ。', img:'./2.png' },
@@ -256,7 +230,10 @@
     const state = { first: null, second: null };
 
     function loadState(){
-      try{ const s = JSON.parse(localStorage.getItem('wedding2025Selections')); if(s){ state.first = s.first ?? null; state.second = s.second ?? null; } }catch(e){}
+      try{
+        const s = JSON.parse(localStorage.getItem('wedding2025Selections'));
+        if(s){ state.first = s.first ?? null; state.second = s.second ?? null; }
+      }catch(e){}
     }
     function saveState(){ localStorage.setItem('wedding2025Selections', JSON.stringify(state)); }
 
@@ -269,6 +246,7 @@
       document.getElementById('formFirst').value = (state.first != null) ? ITEMS[state.first].name : '';
       document.getElementById('formSecond').value = (state.second != null) ? ITEMS[state.second].name : '';
 
+      // カード内ボタンの選択状態を反映
       document.querySelectorAll('.btn[data-role]').forEach(btn=>{
         const idx = Number(btn.dataset.index);
         const role = btn.dataset.role;
@@ -280,9 +258,9 @@
     }
 
     function select(role, idx){
-      // クリックでトグル。既に同じものを選んでいたら解除
+      // クリックでトグル（同じものを再クリックで解除）
       if (state[role] === idx) { state[role] = null; saveState(); updateSticky(); return; }
-      // 第1と第2が同じアイテムにならないようにする
+      // 第1と第2が同一にならないように
       if(role === 'first' && state.second === idx){ state.second = null; }
       if(role === 'second' && state.first === idx){ state.first = null; }
       state[role] = idx; saveState(); updateSticky();
@@ -291,9 +269,14 @@
     function build(){
       ITEMS.forEach((item, idx)=>{ grid.appendChild(makeCard(item, idx)); });
       grid.addEventListener('click', (e)=>{
-        const t = e.target; if(t.matches('.btn[data-role]')){ select(t.dataset.role, Number(t.dataset.index)); }
+        const t = e.target;
+        if(t.matches('.btn[data-role]')){ select(t.dataset.role, Number(t.dataset.index)); }
       });
-      document.getElementById('clearBtn').addEventListener('click', ()=>{ state.first = null; state.second = null; saveState(); updateSticky(); });
+      document.getElementById('clearBtn').addEventListener('click', ()=>{
+        state.first = null; state.second = null; saveState(); updateSticky();
+      });
+
+      // 申込モーダル
       const open = ()=>{ document.getElementById('modal').hidden = false; document.body.style.overflow='hidden'; };
       const close = ()=>{ document.getElementById('modal').hidden = true; document.body.style.overflow=''; };
       document.getElementById('applyBtn').addEventListener('click', open);
