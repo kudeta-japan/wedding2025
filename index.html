@@ -22,9 +22,9 @@
     .grid{ display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 22px; margin-top: 26px; }
     .card{ background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; display: flex; flex-direction: column; }
 
-    /* すべてのカードで画像サイズを統一（固定高＋crop） */
-    .imgwrap{ width: 100%; height: clamp(200px, 23vw, 260px); background: #f1f3f5; position: relative; overflow: hidden; }
-    .imgwrap img{ width: 100%; height: 100%; display: block; object-fit: cover; object-position: center; }
+    /* すべてのカードで画像サイズを統一（比率固定＋crop） */
+    .imgwrap{ width: 100%; aspect-ratio: 16 / 11; background: #f1f3f5; position: relative; overflow: hidden; }
+    .imgwrap img{ width: 100%; height: 100%; display: block; object-fit: cover; object-position: center 30%; }
 
     .card-body{ padding: 14px 14px 16px; display: flex; flex-direction: column; gap: 10px; }
     .card-head{ display: flex; align-items: center; justify-content: space-between; gap: 8px; }
@@ -69,6 +69,22 @@
     .formgrid label.full{ grid-column: 1 / -1; }
     .form-actions{ display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
     @media (max-width: 720px){ .formgrid{ grid-template-columns: 1fr; } }
+
+    /* ---- Mobile tweaks ---- */
+    @media (max-width: 600px){
+      /* 画像は少し縦長に（人物が切れにくい） */
+      .imgwrap{ aspect-ratio: 4 / 3; }
+
+      /* スティッキーバーをコンパクトに */
+      .wrap{ padding-bottom: 180px; }
+      .sticky-inner{ grid-template-columns: 1fr; gap: 8px; padding: 8px; }
+      .chips{ gap: 6px; }
+      .chip{ padding: 6px 8px; border-radius: 12px; }
+      .chip span{ display: none; } /* 第1/第2ラベルは省略し、内容のみ表示 */
+      .actions{ gap: 6px; }
+      .btn.ghost{ padding: 8px 10px; }
+      .btn.cta{ min-width: 100%; font-size: 16px; padding: 12px 14px; }
+    }
   </style>
 </head>
 <body>
