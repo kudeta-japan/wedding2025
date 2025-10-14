@@ -75,6 +75,24 @@
       /* 画像は少し縦長に（人物が切れにくい） */
       .imgwrap{ aspect-ratio: 4 / 3; }
 
+      /* ---- Sticky bar (mobile) ---- */
+      .wrap{ padding-bottom: 160px; }
+      .sticky-inner{ grid-template-columns: 1fr auto; gap: 8px; padding: 8px; }
+      .label{ font-size: 10px; }
+      .chips{ gap: 6px; }
+      .chip{ padding: 6px 10px; border-radius: 12px; }
+      .chip span{ display:inline-block; font-size:11px; padding:2px 6px; border-radius:999px; background:#efe7df; border:1px solid #e2d7cb; color:#6f5b4b; margin-right:6px; }
+      /* 第1と第2で色を少し変える */
+      .chips .chip:nth-child(1) span{ background:#eadfd4; }
+      .chips .chip:nth-child(2) span{ background:#e8e2da; }
+      .chip strong{ font-size:14px; }
+
+      .actions{ gap: 6px; align-items: center; }
+      .btn.ghost{ padding: 8px 10px; font-size: 13px; }
+      /* CTA をさらに小さく＆幅を自動に */
+      .btn.cta{ min-width: auto; width: auto; font-size: 13px; padding: 8px 12px; border-radius: 16px; }
+    }
+
       /* スティッキーバーをコンパクトに＆第1/第2を明確に */
       .wrap{ padding-bottom: 180px; }
       .sticky-inner{ grid-template-columns: 1fr; gap: 8px; padding: 8px; }
@@ -87,6 +105,21 @@
       .btn.ghost{ padding: 8px 10px; }
       /* CTA を少し小さく */
       .btn.cta{ min-width: 100%; font-size: 14px; padding: 10px 12px; }
+    }
+      .imgwrap img{ object-position: center 25%; }
+
+      /* スティッキーバーをもっとコンパクトに */
+      .wrap{ padding-bottom: 260px; }
+      .sticky{ padding: 12px; }
+      .sticky-inner{ grid-template-columns: 1fr; gap: 6px; padding: 8px 10px; border-radius: 14px; }
+      .label{ font-size: 10px; }
+      .chips{ gap: 6px; }
+      .chip{ padding: 6px 10px; border-radius: 12px; }
+      .chip span{ display: none; }
+      .chip strong{ font-size: 12px; }
+      .actions{ gap: 6px; }
+      .btn.ghost{ padding: 8px 10px; font-size: 13px; }
+      .btn.cta{ min-width: 100%; font-size: 16px; padding: 12px 14px; }
     }
 
       /* スティッキーバーをコンパクトに */
