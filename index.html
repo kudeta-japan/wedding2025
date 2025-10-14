@@ -75,6 +75,20 @@
       /* 画像は少し縦長に（人物が切れにくい） */
       .imgwrap{ aspect-ratio: 4 / 3; }
 
+      /* スティッキーバーをコンパクトに＆第1/第2を明確に */
+      .wrap{ padding-bottom: 180px; }
+      .sticky-inner{ grid-template-columns: 1fr; gap: 8px; padding: 8px; }
+      .chips{ gap: 8px; }
+      .chip{ padding: 8px 10px; border-radius: 12px; }
+      .chip span{ display:inline-block; font-size:11px; padding:2px 6px; border-radius:999px; background:#f0ebe6; border:1px solid #e3d8cd; color:#6f5b4b; }
+      .chip strong{ font-size:14px; }
+
+      .actions{ gap: 6px; }
+      .btn.ghost{ padding: 8px 10px; }
+      /* CTA を少し小さく */
+      .btn.cta{ min-width: 100%; font-size: 14px; padding: 10px 12px; }
+    }
+
       /* スティッキーバーをコンパクトに */
       .wrap{ padding-bottom: 180px; }
       .sticky-inner{ grid-template-columns: 1fr; gap: 8px; padding: 8px; }
