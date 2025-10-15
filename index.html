@@ -48,7 +48,7 @@
     .card-body{ padding: 14px 14px 16px; display: flex; flex-direction: column; gap: 10px; }
     .card-head{ display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 
-    /* ★タイトルを2行まで表示（3行目以降は省略） */
+    /* タイトルは2行まで表示 */
     .title{
       font-size: 18px;
       margin: 0;
@@ -76,7 +76,7 @@
     .btn.selected-second:hover{ filter: brightness(.95); }
     .btn.selected-first::before, .btn.selected-second::before{ content:"✓"; display:inline-block; margin-right:6px; }
 
-    /* ★ステッキー部分（ボタン縦配置） */
+    /* 下部ステッキー（ボタン縦配置） */
     .sticky{ position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; display: flex; justify-content: center; padding: 16px; }
     .sticky-inner{
       width: min(var(--maxw), 100%);
@@ -98,51 +98,47 @@
     .chip span{ font-size: 11px; color: #7f6f63; background: #fff; border: 1px solid #eae1d7; border-radius: 999px; padding: 2px 8px; }
     .chip strong{ font-size: 13px; }
 
-    /* ボタン縦並び */
-    .actions{
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 8px;
-    }
+    .actions{ display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
     .btn.ghost{
-      background: #fff;
-      border: 1px solid var(--accent);
-      color: var(--accent);
-      font-size: 14px;
-      padding: 8px 14px;
-      border-radius: 999px;
-      box-shadow: none;
-      min-width: 160px;
+      background: #fff; border: 1px solid var(--accent); color: var(--accent);
+      font-size: 14px; padding: 8px 14px; border-radius: 999px; min-width: 160px;
     }
     .btn.cta{
-      background: var(--accent);
-      color: #fff;
-      border-color: var(--accent);
-      font-size: 16px;
-      padding: 12px 20px;
-      border-radius: 999px;
-      box-shadow: var(--shadow);
-      min-width: 200px;
+      background: var(--accent); color: #fff; border-color: var(--accent);
+      font-size: 16px; padding: 12px 20px; border-radius: 999px; min-width: 200px; box-shadow: var(--shadow);
     }
     .btn.cta:disabled{ background: #b7a9a0; border-color: #b7a9a0; cursor: not-allowed; }
 
-    /* ---- Mobile tweaks ---- */
+    /* モバイル調整 */
     @media (max-width: 600px){
       .imgwrap{ aspect-ratio: 4 / 3; }
       .imgwrap img{ object-position: center 28%; }
-
       .wrap{ padding-bottom: calc(var(--sticky-h) + env(safe-area-inset-bottom) + 80px); }
       .grid{ padding-bottom: calc(var(--sticky-h) + env(safe-area-inset-bottom) + 80px); }
       .sticky{ padding: 12px; }
       .sticky-inner{ grid-template-columns: 1fr auto; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 14px; overflow: hidden; }
-
       .label{ font-size: 10px; }
       .chip strong{ font-size: 13px; }
       .actions{ align-items: center; }
       .btn.cta{ width: 90%; font-size: 14px; }
       .btn.ghost{ width: 70%; font-size: 13px; }
       .card:last-child{ margin-bottom: 120px; }
+    }
+
+    /* ---- モーダル ---- */
+    .modal{ position:fixed; inset:0; z-index:9999; display:none; }
+    .modal.is-open{ display:block; }
+    .modal__backdrop{ position:absolute; inset:0; background:rgba(0,0,0,.45); }
+    .modal__panel{
+      position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+      width:min(92vw,520px); max-height:86vh; overflow:auto;
+      background:#fff; border-radius:16px; padding:18px; box-shadow:var(--shadow);
+      -webkit-overflow-scrolling:touch;
+    }
+    .modal__panel h3{ text-align:center; margin:6px 0 14px; font-size:18px; }
+    label{ display:block; font-size:14px; margin:0 0 10px; }
+    input,textarea{
+      width:100%; border:1px solid #ccc; border-radius:8px; padding:10px; font-size:14px; margin-top:6px;
     }
   </style>
 </head>
@@ -159,7 +155,7 @@
     </main>
   </div>
 
-  <!-- ★下部固定ボタンを縦並びに変更 -->
+  <!-- 下部固定（申し込むの下にクリア） -->
   <div class="sticky" role="complementary" aria-label="選択内容">
     <div class="sticky-inner">
       <div>
@@ -176,8 +172,28 @@
     </div>
   </div>
 
-  <!-- ここから下はJS部分（変更なし） -->
+  <!-- 申込みモーダル（divベースでiOS対応） -->
+  <div id="applyModal" class="modal" aria-hidden="true">
+    <div id="modalBackdrop" class="modal__backdrop"></div>
+    <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="applyTitle">
+      <h3 id="applyTitle">お申し込み情報</h3>
+      <form id="applyForm" action="https://formspree.io/f/xgvnnjol" method="POST">
+        <input type="hidden" name="first_choice"  id="formFirst">
+        <input type="hidden" name="second_choice" id="formSecond">
+
+        <label>お名前<input name="name" required></label>
+        <label>メール<input type="email" name="email" required></label>
+        <label>電話番号<input type="tel" name="tel"></label>
+        <label>ご住所<textarea name="address" rows="3"></textarea></label>
+
+        <button type="submit" class="btn cta" style="width:100%;margin-top:8px">この内容で申し込む</button>
+        <button type="button" id="closeModal" class="btn ghost" style="width:70%;margin:10px auto 0">閉じる</button>
+      </form>
+    </div>
+  </div>
+
   <script>
+    // --------- 商品データ ---------
     const ITEMS = [
       { name:'白日', desc:'桑下さんの日本料理お取り寄せ。丁寧な出汁が沁みる名品。', img:'./1.png' },
       { name:'プルシック', desc:'所シェフの焼き菓子＆生菓子からセレクト。贈り物にも人気のスイーツ。', img:'./2.png' },
@@ -193,8 +209,31 @@
       { name:'shutter1989', desc:'エイコさんのプロフ写真/家族写真撮影。記念の一枚を。', img:'./12.png' },
     ];
 
+    // --------- 要素 ---------
     const grid = document.getElementById('grid');
+    const sel1 = document.getElementById('sel1');
+    const sel2 = document.getElementById('sel2');
+    const applyBtn = document.getElementById('applyBtn');
+    const clearBtn = document.getElementById('clearBtn');
 
+    const modalEl = document.getElementById('applyModal');
+    const backdrop = document.getElementById('modalBackdrop');
+    const closeBtn = document.getElementById('closeModal');
+    const formFirst = document.getElementById('formFirst');
+    const formSecond = document.getElementById('formSecond');
+
+    // --------- 状態 ---------
+    const state = { first: null, second: null };
+
+    function loadState(){
+      try{
+        const s = JSON.parse(localStorage.getItem('wedding2025Selections'));
+        if(s){ state.first = s.first ?? null; state.second = s.second ?? null; }
+      }catch(e){}
+    }
+    function saveState(){ localStorage.setItem('wedding2025Selections', JSON.stringify(state)); }
+
+    // --------- カード描画 ---------
     function makeCard(item, index){
       const el = document.createElement('article');
       el.className = 'card';
@@ -217,48 +256,86 @@
       return el;
     }
 
-    const state = { first: null, second: null };
-
-    function loadState(){
-      try{ const s = JSON.parse(localStorage.getItem('wedding2025Selections')); if(s){ state.first = s.first ?? null; state.second = s.second ?? null; } }catch(e){}
+    function renderCards(){
+      ITEMS.forEach((item, idx)=> grid.appendChild(makeCard(item, idx)));
     }
-    function saveState(){ localStorage.setItem('wedding2025Selections', JSON.stringify(state)); }
 
+    // --------- UI更新 ---------
     function updateSticky(){
-      const s1 = document.getElementById('sel1');
-      const s2 = document.getElementById('sel2');
-      s1.textContent = (state.first != null) ? ITEMS[state.first].name : '未選択';
-      s2.textContent = (state.second != null) ? ITEMS[state.second].name : '未選択';
-      document.getElementById('applyBtn').disabled = !(state.first != null && state.second != null);
+      sel1.textContent = (state.first != null) ? ITEMS[state.first].name : '未選択';
+      sel2.textContent = (state.second != null) ? ITEMS[state.second].name : '未選択';
+      applyBtn.disabled = !(state.first != null && state.second != null);
 
       document.querySelectorAll('.btn[data-role]').forEach(btn=>{
         const idx = Number(btn.dataset.index);
         const role = btn.dataset.role;
         btn.classList.remove('selected-first','selected-second');
         btn.setAttribute('aria-pressed','false');
-        if (role === 'first' && state.first === idx) { btn.classList.add('selected-first'); btn.setAttribute('aria-pressed','true'); }
-        if (role === 'second' && state.second === idx) { btn.classList.add('selected-second'); btn.setAttribute('aria-pressed','true'); }
+        if (role === 'first' && state.first === idx)  { btn.classList.add('selected-first'); btn.setAttribute('aria-pressed','true'); }
+        if (role === 'second' && state.second === idx){ btn.classList.add('selected-second'); btn.setAttribute('aria-pressed','true'); }
       });
     }
 
     function select(role, idx){
       if (state[role] === idx) { state[role] = null; saveState(); updateSticky(); return; }
-      if(role === 'first' && state.second === idx){ state.second = null; }
-      if(role === 'second' && state.first === idx){ state.first = null; }
-      state[role] = idx; saveState(); updateSticky();
+      if (role === 'first' && state.second === idx) { state.second = null; }
+      if (role === 'second' && state.first === idx) { state.first  = null; }
+      state[role] = idx;
+      saveState();
+      updateSticky();
     }
 
-    function build(){
-      ITEMS.forEach((item, idx)=>{ grid.appendChild(makeCard(item, idx)); });
+    // --------- モーダル制御（iOSでも確実） ---------
+    function lockScroll(lock){
+      document.documentElement.style.overflow = lock ? 'hidden' : '';
+      document.body.style.overflow = lock ? 'hidden' : '';
+    }
+    function openModal(){
+      formFirst.value  = (state.first  != null) ? ITEMS[state.first].name  : '';
+      formSecond.value = (state.second != null) ? ITEMS[state.second].name : '';
+      modalEl.classList.add('is-open');
+      lockScroll(true);
+    }
+    function closeModal(){
+      modalEl.classList.remove('is-open');
+      lockScroll(false);
+    }
+
+    // --------- イベント ---------
+    function bindEvents(){
+      // カード内ボタン（イベント委譲）
       grid.addEventListener('click', (e)=>{
-        const t = e.target; if(t.matches('.btn[data-role]')){ select(t.dataset.role, Number(t.dataset.index)); }
+        const t = e.target;
+        if(!t.matches('.btn[data-role]')) return;
+        select(t.dataset.role, Number(t.dataset.index));
       });
-      document.getElementById('clearBtn').addEventListener('click', ()=>{ state.first = null; state.second = null; saveState(); updateSticky(); });
-      document.getElementById('applyBtn').addEventListener('click', ()=>{ alert('フォームに遷移'); });
+
+      // クリア
+      clearBtn.addEventListener('click', ()=>{
+        state.first = null; state.second = null;
+        saveState(); updateSticky();
+        window.scrollTo({top:0, behavior:'smooth'});
+      });
+
+      // 申し込む
+      applyBtn.addEventListener('click', (e)=>{
+        e.preventDefault();
+        if (state.first == null || state.second == null) return;
+        openModal();
+      });
+
+      // モーダル閉じる
+      backdrop.addEventListener('click', closeModal);
+      closeBtn.addEventListener('click', closeModal);
     }
 
+    // --------- 起動 ---------
     loadState();
-    document.addEventListener('DOMContentLoaded', ()=>{ build(); updateSticky(); });
+    document.addEventListener('DOMContentLoaded', ()=>{
+      renderCards();
+      bindEvents();
+      updateSticky();
+    });
   </script>
 </body>
 </html>
