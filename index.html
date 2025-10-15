@@ -2,301 +2,253 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Wedding Gift Catalog</title>
   <style>
-    body {
-      font-family: "Hiragino Sans", "Noto Sans JP", sans-serif;
-      margin: 0;
-      background-color: #f7f3ef;
-      color: #333;
+    :root{
+      --brand:#5c4033;
+      --bg:#f7f3ef;
+      --card:#ffffff;
+      --text:#333;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:"Hiragino Sans","Noto Sans JP",system-ui,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+    }
+    header{
+      padding:16px 16px 0;
+      text-align:center;
+      font-weight:600;
+      letter-spacing:.02em;
     }
 
-    .card {
-      background-color: #fff;
-      border-radius: 16px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      margin: 16px;
-      overflow: hidden;
+    /* グリッド */
+    .grid{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:16px;
+      padding:16px;
+    }
+    @media (min-width:720px){
+      .grid{grid-template-columns:1fr 1fr}
+    }
+    @media (min-width:1040px){
+      .grid{grid-template-columns:1fr 1fr 1fr}
     }
 
-    .card img {
-      width: 100%;
-      display: block;
-      object-fit: cover;
+    /* カード */
+    .card{
+      background:var(--card);
+      border-radius:16px;
+      box-shadow:0 2px 8px rgba(0,0,0,.08);
+      overflow:hidden;
+    }
+    .card__img{
+      width:100%; aspect-ratio:3/2; object-fit:cover; display:block;
+      background:#ddd;
+    }
+    .card__body{padding:14px 14px 16px}
+    .card__title{
+      font-weight:700; font-size:18px; line-height:1.35;
+      margin:0 0 6px; /* 2行までOK */
+      display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+    }
+    .card__desc{font-size:14px; color:#555; margin:0 0 12px}
+    .choice-buttons{display:flex; gap:10px}
+    .choice-buttons button{
+      flex:1; padding:10px 0; border-radius:999px;
+      border:1px solid #ddd; background:#fff; font-size:14px;
+    }
+    .choice-buttons button.active{background:var(--brand); color:#fff; border-color:var(--brand)}
+
+    /* 選択ボックス */
+    .selection{
+      background:#fff; margin:16px; padding:16px; border-radius:16px;
+      box-shadow:0 2px 8px rgba(0,0,0,.1);
+    }
+    .selection__title{font-size:13px; font-weight:700; margin:0 0 10px; color:#6b6b6b}
+    .row{display:flex; align-items:center; gap:10px; margin:8px 0}
+    .badge{font-size:12px; color:#666; background:#f2f2f2; padding:4px 8px; border-radius:8px}
+    .pick{font-size:15px; font-weight:700}
+    .button-area{display:flex; flex-direction:column; align-items:center; gap:10px; margin-top:12px}
+    .btn-main{
+      width:100%; max-width:360px; padding:12px 0; border-radius:12px;
+      background:var(--brand); color:#fff; border:none; font-size:15px; font-weight:600;
+    }
+    .btn-ghost{
+      width:60%; max-width:220px; padding:8px 0; border-radius:12px;
+      background:#fff; color:var(--brand); border:1px solid var(--brand); font-size:14px; font-weight:600;
+    }
+    @media (max-width:600px){
+      .btn-main{max-width:none; width:90%}
     }
 
-    .card-content {
-      padding: 16px;
+    /* モーダル（divベース） */
+    .modal{position:fixed; inset:0; z-index:9999; display:none}
+    .modal.is-open{display:block}
+    .modal__backdrop{position:absolute; inset:0; background:rgba(0,0,0,.4)}
+    .modal__panel{
+      position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+      width:min(92vw,520px); max-height:86vh; overflow:auto;
+      background:#fff; border-radius:16px; padding:20px; -webkit-overflow-scrolling:touch;
+    }
+    .modal__panel h3{margin:0 0 14px; text-align:center; font-size:18px}
+
+    label{display:block; font-size:14px; margin:0 0 10px}
+    input,textarea{
+      width:100%; border:1px solid #ccc; border-radius:8px; padding:10px; font-size:14px; margin-top:6px
     }
 
-    .card-title {
-      font-weight: bold;
-      font-size: 18px;
-      margin-bottom: 8px;
-      line-height: 1.4; /* 2行OKに調整 */
-    }
-
-    .card-desc {
-      font-size: 14px;
-      color: #555;
-      margin-bottom: 12px;
-    }
-
-    .choice-buttons {
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    .choice-buttons button {
-      flex: 1;
-      border-radius: 20px;
-      border: 1px solid #ccc;
-      padding: 10px 0;
-      font-size: 14px;
-      background-color: #fff;
-      color: #333;
-    }
-
-    .choice-buttons button.active {
-      background-color: #5c4033;
-      color: #fff;
-      border: none;
-    }
-
-    /* 下部セレクション */
-    .selection-box {
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      margin: 16px;
-      padding: 16px;
-    }
-
-    .selection-title {
-      font-size: 14px;
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
-
-    .selection-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 8px;
-    }
-
-    .selection-item span {
-      font-size: 13px;
-      color: #666;
-      background: #f2f2f2;
-      padding: 4px 8px;
-      border-radius: 8px;
-    }
-
-    .selection-item div {
-      font-size: 15px;
-      font-weight: bold;
-      color: #333;
-    }
-
-    /* 申し込みとクリアボタン */
-    .button-area {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      margin-top: 16px;
-    }
-
-    .apply-button {
-      width: 90%;
-      background-color: #5c4033;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      padding: 12px 0;
-      font-size: 15px;
-    }
-
-    .clear-button {
-      width: 60%;
-      background-color: white;
-      color: #5c4033;
-      border: 1px solid #5c4033;
-      border-radius: 10px;
-      padding: 8px 0;
-      font-size: 14px;
-    }
-
-    /* モーダル */
-    .modal {
-      position: fixed;
-      inset: 0;
-      display: none;
-      z-index: 9999;
-    }
-    .modal.is-open {
-      display: block;
-    }
-    .modal__backdrop {
-      position: absolute;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.4);
-    }
-    .modal__panel {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      width: min(92vw, 520px);
-      max-height: 86vh;
-      overflow: auto;
-      background: #fff;
-      border-radius: 16px;
-      padding: 20px;
-      -webkit-overflow-scrolling: touch;
-    }
-    .modal__panel h3 {
-      font-size: 18px;
-      margin-top: 0;
-      margin-bottom: 16px;
-      text-align: center;
-    }
-
-    label {
-      display: block;
-      font-size: 14px;
-      margin-bottom: 8px;
-    }
-
-    input, textarea {
-      width: 100%;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      padding: 8px;
-      font-size: 14px;
-      margin-top: 4px;
-      margin-bottom: 12px;
-      box-sizing: border-box;
-    }
+    /* ヘッダー固定の余白（必要なら） */
+    .spacer{height:8px}
   </style>
 </head>
 <body>
+  <header>Wedding Gift Catalog</header>
+  <div class="spacer"></div>
 
-  <!-- 商品カード例 -->
-  <div class="card">
-    <img src="https://placehold.co/600x400" alt="Hygge Coffee">
-    <div class="card-content">
-      <div class="card-title">Hygge Coffee</div>
-      <div class="card-desc">自家焙煎コーヒー豆と焼き菓子のセット。</div>
-      <div class="choice-buttons">
-        <button class="first-choice-btn">第1希望にする</button>
-        <button class="second-choice-btn">第2希望にする</button>
-      </div>
-    </div>
-  </div>
+  <!-- カードをここにJSで描画 -->
+  <section id="cards" class="grid"></section>
 
-  <!-- 下部選択確認エリア -->
-  <div class="selection-box">
-    <div class="selection-title">YOUR SELECTION</div>
-    <div class="selection-item">
-      <span>第1希望</span>
-      <div id="first-choice">白日</div>
-    </div>
-    <div class="selection-item">
-      <span>第2希望</span>
-      <div id="second-choice">プルシック</div>
-    </div>
+  <!-- 下部 選択確認＆申し込み -->
+  <section class="selection" aria-live="polite">
+    <p class="selection__title">YOUR SELECTION</p>
+    <div class="row"><span class="badge">第1希望</span><span id="first-choice" class="pick">—</span></div>
+    <div class="row"><span class="badge">第2希望</span><span id="second-choice" class="pick">—</span></div>
+
     <div class="button-area">
-      <button id="open-apply" type="button" class="apply-button">情報を入力して申し込む</button>
-      <button id="clear-selection" type="button" class="clear-button">クリア</button>
+      <button id="open-apply" type="button" class="btn-main">情報を入力して申し込む</button>
+      <button id="clear-selection" type="button" class="btn-ghost">クリア</button>
     </div>
-  </div>
+  </section>
 
   <!-- モーダル -->
   <div id="apply-modal" class="modal" aria-hidden="true">
-    <div class="modal__backdrop" id="apply-backdrop"></div>
+    <div id="apply-backdrop" class="modal__backdrop"></div>
     <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="apply-title">
       <h3 id="apply-title">お申し込み情報</h3>
       <form id="apply-form" action="https://formspree.io/f/xgvnnjol" method="POST">
         <input type="hidden" name="first_choice" id="form-first">
         <input type="hidden" name="second_choice" id="form-second">
 
-        <label>お名前<input name="name" required></label>
-        <label>メール<input type="email" name="email" required></label>
-        <label>電話番号<input type="tel" name="tel"></label>
+        <label>お名前<input name="name" required /></label>
+        <label>メール<input type="email" name="email" required /></label>
+        <label>電話番号<input type="tel" name="tel" /></label>
         <label>ご住所<textarea name="address" rows="3"></textarea></label>
 
-        <button type="submit" class="apply-button">この内容で申し込む</button>
-        <button type="button" id="close-apply" class="clear-button">閉じる</button>
+        <button type="submit" class="btn-main">この内容で申し込む</button>
+        <button type="button" id="close-apply" class="btn-ghost" style="margin-top:8px">閉じる</button>
       </form>
     </div>
   </div>
 
   <script>
+    // ---- 商品データ（画像は任意差し替え） ----
+    const ITEMS = [
+      { name:'日本料理「白日」桑下さんのお取り寄せ', desc:'丁寧な出汁が沁みる名品。', img:'' },
+      { name:'洋菓子「プルシック」所シェフのスイーツ', desc:'贈り物にも人気の焼き菓子＆生菓子。', img:'' },
+      { name:'「酒のひろせ」お好みのお酒', desc:'食事に合わせて楽しめる一本。', img:'' },
+      { name:'「TAKANASI」八木さんのお花ギフト', desc:'季節の花束／アレンジメント。', img:'' },
+      { name:'Hygge Coffee（ヒュッゲコーヒー）', desc:'自家焙煎コーヒー豆と焼き菓子のセット。', img:'' },
+      { name:'細野ファーム トマトギフトBOX', desc:'甘みのつまった自慢のトマト。', img:'' },
+      { name:'パーソナルジム REV（東さん）', desc:'マンツーマントレーニング2回。', img:'' },
+      { name:'POLA Juair-Amor（舞さん）', desc:'オイルマッサージ体験。', img:'' },
+      { name:'ユニバーサルゴルフラウンジ', desc:'プロのゴルフレッスン。', img:'' },
+      { name:'「春あかり」志津ママ 食事券', desc:'来春オープン店のご利用券。', img:'' },
+      { name:"Lino'a（知佳さん）", desc:'ヘアカット＆ヘッドスパ。', img:'' },
+      { name:'1989（英子さん）スタジオ撮影', desc:'記念に残るフォトセッション。', img:'' },
+    ];
+
+    // ---- 要素取得 ----
+    const cardsEl = document.getElementById('cards');
+    const firstPickEl = document.getElementById('first-choice');
+    const secondPickEl = document.getElementById('second-choice');
     const openBtn = document.getElementById('open-apply');
-    const closeBtn = document.getElementById('close-apply');
-    const backdrop = document.getElementById('apply-backdrop');
+    const clearBtn = document.getElementById('clear-selection');
     const modal = document.getElementById('apply-modal');
+    const backdrop = document.getElementById('apply-backdrop');
+    const closeBtn = document.getElementById('close-apply');
 
-    // 選択データの反映
-    function fillChoices() {
-      const first = document.getElementById('first-choice')?.textContent?.trim() || '';
-      const second = document.getElementById('second-choice')?.textContent?.trim() || '';
-      document.getElementById('form-first').value = first;
-      document.getElementById('form-second').value = second;
+    // ---- レンダリング ----
+    function renderCards() {
+      cardsEl.innerHTML = ITEMS.map((item, idx) => `
+        <article class="card" data-index="${idx}">
+          <img class="card__img" src="${item.img || 'https://placehold.co/600x400'}" alt="${item.name}">
+          <div class="card__body">
+            <h3 class="card__title">${item.name}</h3>
+            <p class="card__desc">${item.desc || ''}</p>
+            <div class="choice-buttons">
+              <button class="btn-first">第1希望にする</button>
+              <button class="btn-second">第2希望にする</button>
+            </div>
+          </div>
+        </article>
+      `).join('');
+    }
+    renderCards();
+
+    // ---- 状態 ----
+    let firstPick = '';
+    let secondPick = '';
+
+    // ---- ユーティリティ ----
+    function updateDisplay(){
+      firstPickEl.textContent = firstPick || '—';
+      secondPickEl.textContent = secondPick || '—';
+      // active表示更新
+      document.querySelectorAll('.card').forEach(card=>{
+        const title = card.querySelector('.card__title').textContent.trim();
+        card.querySelector('.btn-first').classList.toggle('active', title === firstPick);
+        card.querySelector('.btn-second').classList.toggle('active', title === secondPick);
+      });
     }
 
-    function lockScroll(lock) {
-      if (lock) {
-        document.documentElement.style.overflow = 'hidden';
-        document.body.style.overflow = 'hidden';
-      } else {
-        document.documentElement.style.overflow = '';
-        document.body.style.overflow = '';
-      }
+    function setFirst(title){
+      if (title === secondPick) secondPick = ''; // 同一選択は第2を空に
+      firstPick = title;
+      updateDisplay();
+    }
+    function setSecond(title){
+      if (title === firstPick) firstPick = ''; // 同一選択は第1を空に
+      secondPick = title;
+      updateDisplay();
     }
 
-    openBtn?.addEventListener('click', (e) => {
+    // ---- カードのイベント委譲 ----
+    cardsEl.addEventListener('click', (e)=>{
+      const card = e.target.closest('.card'); if(!card) return;
+      const title = card.querySelector('.card__title').textContent.trim();
+      if (e.target.classList.contains('btn-first')) setFirst(title);
+      if (e.target.classList.contains('btn-second')) setSecond(title);
+    });
+
+    // ---- クリア ----
+    clearBtn.addEventListener('click', ()=>{
+      firstPick = ''; secondPick = ''; updateDisplay();
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+
+    // ---- 申し込みモーダル ----
+    function lockScroll(lock){
+      document.documentElement.style.overflow = lock ? 'hidden' : '';
+      document.body.style.overflow = lock ? 'hidden' : '';
+    }
+    openBtn.addEventListener('click', (e)=>{
       e.preventDefault();
-      fillChoices();
-      modal.classList.add('is-open');
-      lockScroll(true);
+      // フォームに反映
+      document.getElementById('form-first').value = firstPick;
+      document.getElementById('form-second').value = secondPick;
+      modal.classList.add('is-open'); lockScroll(true);
     });
+    function closeModal(){ modal.classList.remove('is-open'); lockScroll(false); }
+    backdrop.addEventListener('click', closeModal);
+    closeBtn.addEventListener('click', closeModal);
 
-    function closeModal() {
-      modal.classList.remove('is-open');
-      lockScroll(false);
-    }
-    closeBtn?.addEventListener('click', closeModal);
-    backdrop?.addEventListener('click', closeModal);
-
-    // クリアボタン
-    document.getElementById('clear-selection')?.addEventListener('click', () => {
-      document.getElementById('first-choice').textContent = '';
-      document.getElementById('second-choice').textContent = '';
-    });
-
-    // 第1・第2希望ボタン動作（仮）
-    document.querySelectorAll('.first-choice-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const title = btn.closest('.card').querySelector('.card-title').textContent.trim();
-        document.getElementById('first-choice').textContent = title;
-        document.querySelectorAll('.first-choice-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-      });
-    });
-
-    document.querySelectorAll('.second-choice-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const title = btn.closest('.card').querySelector('.card-title').textContent.trim();
-        document.getElementById('second-choice').textContent = title;
-        document.querySelectorAll('.second-choice-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-      });
-    });
+    // 初期表示
+    updateDisplay();
   </script>
 </body>
 </html>
