@@ -1,254 +1,264 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Wedding Gift Catalog</title>
+  <base href="./">
+  <meta name="robots" content="noindex" />
   <style>
-    :root{
-      --brand:#5c4033;
-      --bg:#f7f3ef;
-      --card:#ffffff;
-      --text:#333;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:"Hiragino Sans","Noto Sans JP",system-ui,sans-serif;
-      background:var(--bg);
-      color:var(--text);
-    }
-    header{
-      padding:16px 16px 0;
-      text-align:center;
-      font-weight:600;
-      letter-spacing:.02em;
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans JP", Roboto, Helvetica, Arial, sans-serif;
+      color: #2d2a26;
+      line-height: 1.6;
+      background-image: url('./top.png');
+      background-position: center top;
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-attachment: fixed;
     }
 
-    /* グリッド */
-    .grid{
-      display:grid;
-      grid-template-columns:1fr;
-      gap:16px;
-      padding:16px;
-    }
-    @media (min-width:720px){
-      .grid{grid-template-columns:1fr 1fr}
-    }
-    @media (min-width:1040px){
-      .grid{grid-template-columns:1fr 1fr 1fr}
+    :root {
+      --accent:#4e3b2f;
+      --accent-2:#7a5f4d;
+      --muted:#6b6b6b;
+      --card-bg:#ffffff;
+      --chip-bg:#f4f1ed;
+      --shadow:0 8px 28px rgba(0,0,0,.08);
+      --radius:18px;
+      --maxw:1180px;
+      --sticky-h:120px;
     }
 
-    /* カード */
-    .card{
-      background:var(--card);
-      border-radius:16px;
-      box-shadow:0 2px 8px rgba(0,0,0,.08);
-      overflow:hidden;
-    }
-    .card__img{
-      width:100%; aspect-ratio:3/2; object-fit:cover; display:block;
-      background:#ddd;
-    }
-    .card__body{padding:14px 14px 16px}
-    .card__title{
-      font-weight:700; font-size:18px; line-height:1.35;
-      margin:0 0 6px; /* 2行までOK */
-      display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
-    }
-    .card__desc{font-size:14px; color:#555; margin:0 0 12px}
-    .choice-buttons{display:flex; gap:10px}
-    .choice-buttons button{
-      flex:1; padding:10px 0; border-radius:999px;
-      border:1px solid #ddd; background:#fff; font-size:14px;
-    }
-    .choice-buttons button.active{background:var(--brand); color:#fff; border-color:var(--brand)}
+    .wrap{ max-width: var(--maxw); margin: 0 auto; padding: 28px 16px calc(var(--sticky-h) + 40px); }
+    .hero{ text-align: center; margin: 16px auto 28px; }
+    .eyebrow{ color: var(--accent-2); letter-spacing: .2em; font-size: 12px; margin: 0; }
+    h1{ margin: 8px 0 10px; font-size: clamp(22px, 3.2vw, 34px); letter-spacing: .02em; }
+    .lead{ margin: 0 auto; max-width: 860px; color: var(--muted); font-size: 14px; }
 
-    /* 選択ボックス */
-    .selection{
-      background:#fff; margin:16px; padding:16px; border-radius:16px;
-      box-shadow:0 2px 8px rgba(0,0,0,.1);
-    }
-    .selection__title{font-size:13px; font-weight:700; margin:0 0 10px; color:#6b6b6b}
-    .row{display:flex; align-items:center; gap:10px; margin:8px 0}
-    .badge{font-size:12px; color:#666; background:#f2f2f2; padding:4px 8px; border-radius:8px}
-    .pick{font-size:15px; font-weight:700}
-    .button-area{display:flex; flex-direction:column; align-items:center; gap:10px; margin-top:12px}
-    .btn-main{
-      width:100%; max-width:360px; padding:12px 0; border-radius:12px;
-      background:var(--brand); color:#fff; border:none; font-size:15px; font-weight:600;
-    }
-    .btn-ghost{
-      width:60%; max-width:220px; padding:8px 0; border-radius:12px;
-      background:#fff; color:var(--brand); border:1px solid var(--brand); font-size:14px; font-weight:600;
-    }
-    @media (max-width:600px){
-      .btn-main{max-width:none; width:90%}
+    .grid{ display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 22px; margin-top: 26px; padding-bottom: calc(var(--sticky-h) + 40px); }
+    .card{ background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; display: flex; flex-direction: column; }
+
+    .imgwrap{ width: 100%; aspect-ratio: 16 / 11; background: #f1f3f5; position: relative; overflow: hidden; }
+    .imgwrap img{ width: 100%; height: 100%; display: block; object-fit: cover; object-position: center 30%; }
+
+    .card-body{ padding: 14px 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+    .card-head{ display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+
+    /* ★タイトルを2行まで表示（3行目以降は省略） */
+    .title{
+      font-size: 18px;
+      margin: 0;
+      line-height: 1.3;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      word-break: break-word;
+      flex: 1;
+      min-width: 0;
     }
 
-    /* モーダル（divベース） */
-    .modal{position:fixed; inset:0; z-index:9999; display:none}
-    .modal.is-open{display:block}
-    .modal__backdrop{position:absolute; inset:0; background:rgba(0,0,0,.4)}
-    .modal__panel{
-      position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
-      width:min(92vw,520px); max-height:86vh; overflow:auto;
-      background:#fff; border-radius:16px; padding:20px; -webkit-overflow-scrolling:touch;
-    }
-    .modal__panel h3{margin:0 0 14px; text-align:center; font-size:18px}
+    .badge{ background: #f6efe9; color: var(--accent-2); border: 1px solid #ecdcca; padding: 4px 8px; border-radius: 999px; font-size: 11px; white-space: nowrap; }
+    .desc{ margin: 0; color: #4a4a4a; font-size: 13px; line-height: 1.55; min-height: 3.1em; }
 
-    label{display:block; font-size:14px; margin:0 0 10px}
-    input,textarea{
-      width:100%; border:1px solid #ccc; border-radius:8px; padding:10px; font-size:14px; margin-top:6px
+    .btns{ display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
+    .btn{ appearance: none; border: 1px solid #e1d9d2; background: #fff; color: #3d3833; border-radius: 999px; padding: 10px 12px; font-size: 13px; cursor: pointer; transition: transform .02s ease, background .2s ease, border-color .2s ease; }
+    .btn:hover{ background: #faf6f2; }
+    .btn:active{ transform: translateY(1px); }
+    .btn.selected-first{ background: var(--accent); border-color: var(--accent); color:#fff; }
+    .btn.selected-first:hover{ filter: brightness(.95); }
+    .btn.selected-second{ background: var(--accent-2); border-color: var(--accent-2); color:#fff; }
+    .btn.selected-second:hover{ filter: brightness(.95); }
+    .btn.selected-first::before, .btn.selected-second::before{ content:"✓"; display:inline-block; margin-right:6px; }
+
+    /* ★ステッキー部分（ボタン縦配置） */
+    .sticky{ position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; display: flex; justify-content: center; padding: 16px; }
+    .sticky-inner{
+      width: min(var(--maxw), 100%);
+      background: rgba(255,255,255,.96);
+      border: 1px solid #eae5df;
+      backdrop-filter: blur(6px);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 10px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 10px;
     }
 
-    /* ヘッダー固定の余白（必要なら） */
-    .spacer{height:8px}
+    .label{ font-size: 11px; color: #7c6f66; letter-spacing: .1em; }
+    .chips{ display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+    .chip{ background: var(--chip-bg); border: 1px solid #eae1d7; border-radius: 999px; padding: 8px 12px; display: flex; align-items: center; gap: 8px; }
+    .chip span{ font-size: 11px; color: #7f6f63; background: #fff; border: 1px solid #eae1d7; border-radius: 999px; padding: 2px 8px; }
+    .chip strong{ font-size: 13px; }
+
+    /* ボタン縦並び */
+    .actions{
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+    }
+    .btn.ghost{
+      background: #fff;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-size: 14px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      box-shadow: none;
+      min-width: 160px;
+    }
+    .btn.cta{
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      font-size: 16px;
+      padding: 12px 20px;
+      border-radius: 999px;
+      box-shadow: var(--shadow);
+      min-width: 200px;
+    }
+    .btn.cta:disabled{ background: #b7a9a0; border-color: #b7a9a0; cursor: not-allowed; }
+
+    /* ---- Mobile tweaks ---- */
+    @media (max-width: 600px){
+      .imgwrap{ aspect-ratio: 4 / 3; }
+      .imgwrap img{ object-position: center 28%; }
+
+      .wrap{ padding-bottom: calc(var(--sticky-h) + env(safe-area-inset-bottom) + 80px); }
+      .grid{ padding-bottom: calc(var(--sticky-h) + env(safe-area-inset-bottom) + 80px); }
+      .sticky{ padding: 12px; }
+      .sticky-inner{ grid-template-columns: 1fr auto; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 14px; overflow: hidden; }
+
+      .label{ font-size: 10px; }
+      .chip strong{ font-size: 13px; }
+      .actions{ align-items: center; }
+      .btn.cta{ width: 90%; font-size: 14px; }
+      .btn.ghost{ width: 70%; font-size: 13px; }
+      .card:last-child{ margin-bottom: 120px; }
+    }
   </style>
 </head>
 <body>
-  <header>Wedding Gift Catalog</header>
-  <div class="spacer"></div>
+  <div class="wrap">
+    <header class="hero">
+      <p class="eyebrow">THANK YOU</p>
+      <h1>私たちのありがとうを皆様へ</h1>
+      <p class="lead">今回は、私たちが普段お世話になっている方々の商品を中心に、カタログギフトとしてご用意しました。写真と説明をご覧のうえ、<strong>第1・第2希望</strong>をお選びください。</p>
+    </header>
 
-  <!-- カードをここにJSで描画 -->
-  <section id="cards" class="grid"></section>
+    <main>
+      <section id="grid" class="grid" aria-label="ギフト一覧"></section>
+    </main>
+  </div>
 
-  <!-- 下部 選択確認＆申し込み -->
-  <section class="selection" aria-live="polite">
-    <p class="selection__title">YOUR SELECTION</p>
-    <div class="row"><span class="badge">第1希望</span><span id="first-choice" class="pick">—</span></div>
-    <div class="row"><span class="badge">第2希望</span><span id="second-choice" class="pick">—</span></div>
-
-    <div class="button-area">
-      <button id="open-apply" type="button" class="btn-main">情報を入力して申し込む</button>
-      <button id="clear-selection" type="button" class="btn-ghost">クリア</button>
-    </div>
-  </section>
-
-  <!-- モーダル -->
-  <div id="apply-modal" class="modal" aria-hidden="true">
-    <div id="apply-backdrop" class="modal__backdrop"></div>
-    <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="apply-title">
-      <h3 id="apply-title">お申し込み情報</h3>
-      <form id="apply-form" action="https://formspree.io/f/xgvnnjol" method="POST">
-        <input type="hidden" name="first_choice" id="form-first">
-        <input type="hidden" name="second_choice" id="form-second">
-
-        <label>お名前<input name="name" required /></label>
-        <label>メール<input type="email" name="email" required /></label>
-        <label>電話番号<input type="tel" name="tel" /></label>
-        <label>ご住所<textarea name="address" rows="3"></textarea></label>
-
-        <button type="submit" class="btn-main">この内容で申し込む</button>
-        <button type="button" id="close-apply" class="btn-ghost" style="margin-top:8px">閉じる</button>
-      </form>
+  <!-- ★下部固定ボタンを縦並びに変更 -->
+  <div class="sticky" role="complementary" aria-label="選択内容">
+    <div class="sticky-inner">
+      <div>
+        <div class="label">YOUR SELECTION</div>
+        <div class="chips">
+          <div class="chip" aria-live="polite"><span>第1希望</span><strong id="sel1">未選択</strong></div>
+          <div class="chip" aria-live="polite"><span>第2希望</span><strong id="sel2">未選択</strong></div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn cta" id="applyBtn" type="button" disabled>情報を入力して申し込む</button>
+        <button class="btn ghost" id="clearBtn" type="button">クリア</button>
+      </div>
     </div>
   </div>
 
+  <!-- ここから下はJS部分（変更なし） -->
   <script>
-    // ---- 商品データ（画像は任意差し替え） ----
     const ITEMS = [
-      { name:'日本料理「白日」桑下さんのお取り寄せ', desc:'丁寧な出汁が沁みる名品。', img:'' },
-      { name:'洋菓子「プルシック」所シェフのスイーツ', desc:'贈り物にも人気の焼き菓子＆生菓子。', img:'' },
-      { name:'「酒のひろせ」お好みのお酒', desc:'食事に合わせて楽しめる一本。', img:'' },
-      { name:'「TAKANASI」八木さんのお花ギフト', desc:'季節の花束／アレンジメント。', img:'' },
-      { name:'Hygge Coffee（ヒュッゲコーヒー）', desc:'自家焙煎コーヒー豆と焼き菓子のセット。', img:'' },
-      { name:'細野ファーム トマトギフトBOX', desc:'甘みのつまった自慢のトマト。', img:'' },
-      { name:'パーソナルジム REV（東さん）', desc:'マンツーマントレーニング2回。', img:'' },
-      { name:'POLA Juair-Amor（舞さん）', desc:'オイルマッサージ体験。', img:'' },
-      { name:'ユニバーサルゴルフラウンジ', desc:'プロのゴルフレッスン。', img:'' },
-      { name:'「春あかり」志津ママ 食事券', desc:'来春オープン店のご利用券。', img:'' },
-      { name:"Lino'a（知佳さん）", desc:'ヘアカット＆ヘッドスパ。', img:'' },
-      { name:'1989（英子さん）スタジオ撮影', desc:'記念に残るフォトセッション。', img:'' },
+      { name:'白日', desc:'桑下さんの日本料理お取り寄せ。丁寧な出汁が沁みる名品。', img:'./1.png' },
+      { name:'プルシック', desc:'所シェフの焼き菓子＆生菓子からセレクト。贈り物にも人気のスイーツ。', img:'./2.png' },
+      { name:'TAKANASI flower decoration', desc:'八木さんの季節の花束／アレンジメント。', img:'./3.png' },
+      { name:'酒のひろせ', desc:'ワインでも日本酒でも。食事に合わせて楽しめる一本。', img:'./4.png' },
+      { name:'Hygge Coffee', desc:'自家焙煎コーヒー豆と焼き菓子のセット。', img:'./5.png' },
+      { name:'細野ファーム', desc:'自慢の甘いトマトを使った詰め合わせギフト。', img:'./6.png' },
+      { name:'パーソナルジムREV', desc:'気さくで頼もしい東さんのトレーニング2回チケット。', img:'./7.png' },
+      { name:'POLA Juair-Amor', desc:'ゴッドハンド真衣さんのオイルマッサージ。', img:'./8.png' },
+      { name:'ユニバーサルゴルフラウンジ', desc:'プロによるマンツーマンレッスン。', img:'./9.png' },
+      { name:'春あかり', desc:'志津ママのお店（来春オープン）で使えるお食事券。', img:'./10.png' },
+      { name:"Lino'a", desc:'知佳さんによるカット＆癒しのヘッドスパ。', img:'./11.png' },
+      { name:'shutter1989', desc:'エイコさんのプロフ写真/家族写真撮影。記念の一枚を。', img:'./12.png' },
     ];
 
-    // ---- 要素取得 ----
-    const cardsEl = document.getElementById('cards');
-    const firstPickEl = document.getElementById('first-choice');
-    const secondPickEl = document.getElementById('second-choice');
-    const openBtn = document.getElementById('open-apply');
-    const clearBtn = document.getElementById('clear-selection');
-    const modal = document.getElementById('apply-modal');
-    const backdrop = document.getElementById('apply-backdrop');
-    const closeBtn = document.getElementById('close-apply');
+    const grid = document.getElementById('grid');
 
-    // ---- レンダリング ----
-    function renderCards() {
-      cardsEl.innerHTML = ITEMS.map((item, idx) => `
-        <article class="card" data-index="${idx}">
-          <img class="card__img" src="${item.img || 'https://placehold.co/600x400'}" alt="${item.name}">
-          <div class="card__body">
-            <h3 class="card__title">${item.name}</h3>
-            <p class="card__desc">${item.desc || ''}</p>
-            <div class="choice-buttons">
-              <button class="btn-first">第1希望にする</button>
-              <button class="btn-second">第2希望にする</button>
-            </div>
+    function makeCard(item, index){
+      const el = document.createElement('article');
+      el.className = 'card';
+      el.innerHTML = `
+        <div class="imgwrap">
+          <img src="${item.img}" alt="${item.name}" loading="lazy" decoding="async">
+        </div>
+        <div class="card-body">
+          <div class="card-head">
+            <h3 class="title">${item.name}</h3>
+            <span class="badge">選べるギフト</span>
           </div>
-        </article>
-      `).join('');
+          <p class="desc">${item.desc}</p>
+          <div class="btns">
+            <button class="btn" data-role="first" data-index="${index}" aria-pressed="false">第1希望にする</button>
+            <button class="btn" data-role="second" data-index="${index}" aria-pressed="false">第2希望にする</button>
+          </div>
+        </div>
+      `;
+      return el;
     }
-    renderCards();
 
-    // ---- 状態 ----
-    let firstPick = '';
-    let secondPick = '';
+    const state = { first: null, second: null };
 
-    // ---- ユーティリティ ----
-    function updateDisplay(){
-      firstPickEl.textContent = firstPick || '—';
-      secondPickEl.textContent = secondPick || '—';
-      // active表示更新
-      document.querySelectorAll('.card').forEach(card=>{
-        const title = card.querySelector('.card__title').textContent.trim();
-        card.querySelector('.btn-first').classList.toggle('active', title === firstPick);
-        card.querySelector('.btn-second').classList.toggle('active', title === secondPick);
+    function loadState(){
+      try{ const s = JSON.parse(localStorage.getItem('wedding2025Selections')); if(s){ state.first = s.first ?? null; state.second = s.second ?? null; } }catch(e){}
+    }
+    function saveState(){ localStorage.setItem('wedding2025Selections', JSON.stringify(state)); }
+
+    function updateSticky(){
+      const s1 = document.getElementById('sel1');
+      const s2 = document.getElementById('sel2');
+      s1.textContent = (state.first != null) ? ITEMS[state.first].name : '未選択';
+      s2.textContent = (state.second != null) ? ITEMS[state.second].name : '未選択';
+      document.getElementById('applyBtn').disabled = !(state.first != null && state.second != null);
+
+      document.querySelectorAll('.btn[data-role]').forEach(btn=>{
+        const idx = Number(btn.dataset.index);
+        const role = btn.dataset.role;
+        btn.classList.remove('selected-first','selected-second');
+        btn.setAttribute('aria-pressed','false');
+        if (role === 'first' && state.first === idx) { btn.classList.add('selected-first'); btn.setAttribute('aria-pressed','true'); }
+        if (role === 'second' && state.second === idx) { btn.classList.add('selected-second'); btn.setAttribute('aria-pressed','true'); }
       });
     }
 
-    function setFirst(title){
-      if (title === secondPick) secondPick = ''; // 同一選択は第2を空に
-      firstPick = title;
-      updateDisplay();
-    }
-    function setSecond(title){
-      if (title === firstPick) firstPick = ''; // 同一選択は第1を空に
-      secondPick = title;
-      updateDisplay();
+    function select(role, idx){
+      if (state[role] === idx) { state[role] = null; saveState(); updateSticky(); return; }
+      if(role === 'first' && state.second === idx){ state.second = null; }
+      if(role === 'second' && state.first === idx){ state.first = null; }
+      state[role] = idx; saveState(); updateSticky();
     }
 
-    // ---- カードのイベント委譲 ----
-    cardsEl.addEventListener('click', (e)=>{
-      const card = e.target.closest('.card'); if(!card) return;
-      const title = card.querySelector('.card__title').textContent.trim();
-      if (e.target.classList.contains('btn-first')) setFirst(title);
-      if (e.target.classList.contains('btn-second')) setSecond(title);
-    });
-
-    // ---- クリア ----
-    clearBtn.addEventListener('click', ()=>{
-      firstPick = ''; secondPick = ''; updateDisplay();
-      window.scrollTo({top:0, behavior:'smooth'});
-    });
-
-    // ---- 申し込みモーダル ----
-    function lockScroll(lock){
-      document.documentElement.style.overflow = lock ? 'hidden' : '';
-      document.body.style.overflow = lock ? 'hidden' : '';
+    function build(){
+      ITEMS.forEach((item, idx)=>{ grid.appendChild(makeCard(item, idx)); });
+      grid.addEventListener('click', (e)=>{
+        const t = e.target; if(t.matches('.btn[data-role]')){ select(t.dataset.role, Number(t.dataset.index)); }
+      });
+      document.getElementById('clearBtn').addEventListener('click', ()=>{ state.first = null; state.second = null; saveState(); updateSticky(); });
+      document.getElementById('applyBtn').addEventListener('click', ()=>{ alert('フォームに遷移'); });
     }
-    openBtn.addEventListener('click', (e)=>{
-      e.preventDefault();
-      // フォームに反映
-      document.getElementById('form-first').value = firstPick;
-      document.getElementById('form-second').value = secondPick;
-      modal.classList.add('is-open'); lockScroll(true);
-    });
-    function closeModal(){ modal.classList.remove('is-open'); lockScroll(false); }
-    backdrop.addEventListener('click', closeModal);
-    closeBtn.addEventListener('click', closeModal);
 
-    // 初期表示
-    updateDisplay();
+    loadState();
+    document.addEventListener('DOMContentLoaded', ()=>{ build(); updateSticky(); });
   </script>
 </body>
 </html>
