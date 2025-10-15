@@ -40,7 +40,7 @@
     .lead{ margin: 0 auto; max-width: 860px; color: var(--muted); font-size: 14px; }
 
     .grid{ display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 22px; margin-top: 26px; padding-bottom: calc(var(--sticky-h) + 40px); }
-    .card{ background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; display: flex; flex-direction: column; }
+    .card{ background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; display: flex; flex-direction: column; position: relative; }
 
     .imgwrap{ width: 100%; aspect-ratio: 16 / 11; background: #f1f3f5; position: relative; overflow: hidden; }
     .imgwrap img{ width: 100%; height: 100%; display: block; object-fit: cover; object-position: center 30%; }
@@ -75,6 +75,26 @@
     .btn.selected-second{ background: var(--accent-2); border-color: var(--accent-2); color:#fff; }
     .btn.selected-second:hover{ filter: brightness(.95); }
     .btn.selected-first::before, .btn.selected-second::before{ content:"✓"; display:inline-block; margin-right:6px; }
+
+    /* 在庫バッジ */
+    .stock-badge{
+      position:absolute; left:10px; top:10px;
+      background: rgba(255,255,255,.92);
+      border: 1px solid #e5ded6;
+      padding: 4px 8px; border-radius: 999px;
+      font-size: 12px; color:#5e554e; backdrop-filter: blur(4px);
+    }
+    /* 売り切れの見た目とボタン無効化 */
+    .card.soldout .imgwrap::after{
+      content:"受付終了";
+      position:absolute; inset:0;
+      display:flex; align-items:center; justify-content:center;
+      background: rgba(0,0,0,.35);
+      color:#fff; font-weight:700; font-size:18px; letter-spacing:.2em;
+    }
+    .card.soldout .btns button{
+      opacity:.5; pointer-events:none;
+    }
 
     /* 下部ステッキー（ボタン縦配置） */
     .sticky{ position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; display: flex; justify-content: center; padding: 16px; }
@@ -193,20 +213,20 @@
   </div>
 
   <script>
-    // --------- 商品データ ---------
+    // --------- 商品データ（残数は手動更新：stock） ---------
     const ITEMS = [
-      { name:'白日', desc:'桑下さんの日本料理お取り寄せ。丁寧な出汁が沁みる名品。', img:'./1.png' },
-      { name:'プルシック', desc:'所シェフの焼き菓子＆生菓子からセレクト。贈り物にも人気のスイーツ。', img:'./2.png' },
-      { name:'TAKANASI flower decoration', desc:'八木さんの季節の花束／アレンジメント。', img:'./3.png' },
-      { name:'酒のひろせ', desc:'ワインでも日本酒でも。食事に合わせて楽しめる一本。', img:'./4.png' },
-      { name:'Hygge Coffee', desc:'自家焙煎コーヒー豆と焼き菓子のセット。', img:'./5.png' },
-      { name:'細野ファーム', desc:'自慢の甘いトマトを使った詰め合わせギフト。', img:'./6.png' },
-      { name:'パーソナルジムREV', desc:'気さくで頼もしい東さんのトレーニング2回チケット。', img:'./7.png' },
-      { name:'POLA Juair-Amor', desc:'ゴッドハンド真衣さんのオイルマッサージ。', img:'./8.png' },
-      { name:'ユニバーサルゴルフラウンジ', desc:'プロによるマンツーマンレッスン。', img:'./9.png' },
-      { name:'春あかり', desc:'志津ママのお店（来春オープン）で使えるお食事券。', img:'./10.png' },
-      { name:"Lino'a", desc:'知佳さんによるカット＆癒しのヘッドスパ。', img:'./11.png' },
-      { name:'shutter1989', desc:'エイコさんのプロフ写真/家族写真撮影。記念の一枚を。', img:'./12.png' },
+      { name:'白日', desc:'桑下さんの日本料理お取り寄せ。丁寧な出汁が沁みる名品。', img:'./1.png',  stock: 10 },
+      { name:'プルシック', desc:'所シェフの焼き菓子＆生菓子からセレクト。贈り物にも人気のスイーツ。', img:'./2.png',  stock: 10 },
+      { name:'TAKANASI flower decoration', desc:'八木さんの季節の花束／アレンジメント。', img:'./3.png',  stock: 10 },
+      { name:'酒のひろせ', desc:'ワインでも日本酒でも。食事に合わせて楽しめる一本。', img:'./4.png',  stock: 10 }, // 受付終了
+      { name:'Hygge Coffee', desc:'自家焙煎コーヒー豆と焼き菓子のセット。', img:'./5.png',  stock: 10 },
+      { name:'細野ファーム', desc:'自慢の甘いトマトを使った詰め合わせギフト。', img:'./6.png',  stock: 10 },
+      { name:'パーソナルジムREV', desc:'気さくで頼もしい東さんのトレーニング2回チケット。', img:'./7.png',  stock: 5 },
+      { name:'POLA Juair-Amor', desc:'ゴッドハンド真衣さんのオイルマッサージ。', img:'./8.png',  stock: 5 },
+      { name:'ユニバーサルゴルフラウンジ', desc:'プロによるマンツーマンレッスン。', img:'./9.png',  stock: 6 },
+      { name:'春あかり', desc:'志津ママのお店（来春オープン）で使えるお食事券。', img:'./10.png', stock: 5 }, // 受付終了
+      { name:"Lino'a", desc:'知佳さんによるカット＆癒しのヘッドスパ。', img:'./11.png',  stock: 4 },
+      { name:'shutter1989', desc:'エイコさんのプロフ写真/家族写真撮影。記念の一枚を。', img:'./12.png', stock: 5 },
     ];
 
     // --------- 要素 ---------
@@ -233,13 +253,15 @@
     }
     function saveState(){ localStorage.setItem('wedding2025Selections', JSON.stringify(state)); }
 
-    // --------- カード描画 ---------
+    // --------- カード描画（在庫表示つき） ---------
     function makeCard(item, index){
+      const soldout = (item.stock ?? 0) <= 0;
       const el = document.createElement('article');
-      el.className = 'card';
+      el.className = 'card' + (soldout ? ' soldout' : '');
       el.innerHTML = `
         <div class="imgwrap">
           <img src="${item.img}" alt="${item.name}" loading="lazy" decoding="async">
+          <div class="stock-badge">${soldout ? '受付終了' : `残数 ${item.stock}`}</div>
         </div>
         <div class="card-body">
           <div class="card-head">
@@ -248,8 +270,8 @@
           </div>
           <p class="desc">${item.desc}</p>
           <div class="btns">
-            <button class="btn" data-role="first" data-index="${index}" aria-pressed="false">第1希望にする</button>
-            <button class="btn" data-role="second" data-index="${index}" aria-pressed="false">第2希望にする</button>
+            <button class="btn" data-role="first"  data-index="${index}" aria-pressed="false" ${soldout ? 'disabled' : ''}>第1希望にする</button>
+            <button class="btn" data-role="second" data-index="${index}" aria-pressed="false" ${soldout ? 'disabled' : ''}>第2希望にする</button>
           </div>
         </div>
       `;
@@ -277,6 +299,9 @@
     }
 
     function select(role, idx){
+      // 在庫0は選択不可
+      if ((ITEMS[idx].stock ?? 0) <= 0) return;
+
       if (state[role] === idx) { state[role] = null; saveState(); updateSticky(); return; }
       if (role === 'first' && state.second === idx) { state.second = null; }
       if (role === 'second' && state.first === idx) { state.first  = null; }
