@@ -31,6 +31,11 @@
       --radius:18px;
       --maxw:1180px;
       --sticky-h:120px;
+
+      /* ★目立たせる3商品のブランドカラー */
+      --rev:#2cb67d;        /* パーソナルジムREV（グリーン） */
+      --shutter:#7c3aed;    /* shutter1989（パープル） */
+      --golf:#0ea5e9;       /* ユニバーサルゴルフラウンジ（ブルー） */
     }
 
     .wrap{ max-width: var(--maxw); margin: 0 auto; padding: 28px 16px calc(var(--sticky-h) + 40px); }
@@ -40,7 +45,7 @@
     .lead{ margin: 0 auto; max-width: 860px; color: var(--muted); font-size: 14px; }
 
     .grid{ display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 22px; margin-top: 26px; padding-bottom: calc(var(--sticky-h) + 40px); }
-    .card{ background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; display: flex; flex-direction: column; position: relative; }
+    .card{ background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; display: flex; flex-direction: column; position: relative; border: 1px solid transparent; }
 
     .imgwrap{ width: 100%; aspect-ratio: 16 / 11; background: #f1f3f5; position: relative; overflow: hidden; }
     .imgwrap img{ width: 100%; height: 100%; display: block; object-fit: cover; object-position: center 30%; }
@@ -76,16 +81,43 @@
     .btn.selected-second:hover{ filter: brightness(.95); }
     .btn.selected-first::before, .btn.selected-second::before{ content:"✓"; display:inline-block; margin-right:6px; }
 
-    /* 在庫バッジ */
+    /* 在庫バッジ（ベース） */
     .stock-badge{
       position:absolute; left:10px; top:10px;
       background: rgba(255,255,255,.92);
       border: 1px solid #e5ded6;
       padding: 4px 8px; border-radius: 999px;
       font-size: 12px; color:#5e554e; backdrop-filter: blur(4px);
+      transition: transform .2s ease;
+    }
+    /* 在庫の信号色 */
+    .stock-badge.green  { background:#e7f8ed; border-color:#a6dfb2; color:#1c7d32; }
+    .stock-badge.orange { background:#fff4e5; border-color:#ffc37a; color:#c05e00; }
+    .stock-badge.red    { background:#ffe8e8; border-color:#ff9a9a; color:#b40000; }
+    .stock-badge.gray   { background:#f0f0f0; border-color:#ddd;    color:#777; }
+
+    /* 3商品のブランド塗り（淡グラデ） */
+    .stock-badge.brand.rev{
+      background: linear-gradient(135deg, #e9fbf3, #ccf3df);
+      border-color: #b6e9cc; color:#106842;
+    }
+    .stock-badge.brand.shutter{
+      background: linear-gradient(135deg, #f1eaff, #e4d7ff);
+      border-color: #d4bfff; color:#4c1d95;
+    }
+    .stock-badge.brand.golf{
+      background: linear-gradient(135deg, #e6f7ff, #d2f1ff);
+      border-color: #b8eaff; color:#075985;
     }
 
-    /* ★イチオシリボン（REV / shutter1989に表示） */
+    /* 軽い鼓動アニメ（残1-2で適用） */
+    @keyframes pulseSoft{
+      0%,100%{ transform: scale(1); box-shadow: none; }
+      50%{ transform: scale(1.05); box-shadow: 0 0 0 6px rgba(0,0,0,0.03); }
+    }
+    .stock-badge.pulse{ animation: pulseSoft 1.4s ease-in-out infinite; }
+
+    /* ★イチオシリボン（3商品はブランド色に） */
     .ribbon{
       position:absolute; right:-36px; top:12px;
       transform: rotate(45deg);
@@ -95,6 +127,14 @@
       pointer-events:none;
       user-select:none;
     }
+    .card.accent-rev .ribbon     { background: var(--rev); }
+    .card.accent-shutter .ribbon { background: var(--shutter); }
+    .card.accent-golf .ribbon    { background: var(--golf); }
+
+    /* 3商品は枠線＋影で強調 */
+    .card.accent-rev     { border: 2px solid var(--rev);     box-shadow: 0 6px 20px rgba(44,182,125,.25); }
+    .card.accent-shutter { border: 2px solid var(--shutter); box-shadow: 0 6px 20px rgba(124,58,237,.25); }
+    .card.accent-golf    { border: 2px solid var(--golf);    box-shadow: 0 6px 20px rgba(14,165,233,.25); }
 
     /* 売り切れの見た目とボタン無効化 */
     .card.soldout .imgwrap::after{
@@ -104,9 +144,7 @@
       background: rgba(0,0,0,.35);
       color:#fff; font-weight:700; font-size:18px; letter-spacing:.2em;
     }
-    .card.soldout .btns button{
-      opacity:.5; pointer-events:none;
-    }
+    .card.soldout .btns button{ opacity:.5; pointer-events:none; }
 
     /* 下部ステッキー（ボタン縦配置） */
     .sticky{ position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; display: flex; justify-content: center; padding: 16px; }
@@ -225,7 +263,7 @@
   </div>
 
   <script>
-    // --------- 商品データ（先頭：REV、2番目：shutter1989） ---------
+    // --------- 商品データ（先頭：REV、2番目：shutter） ---------
     const ITEMS = [
       { name:'パーソナルジムREV', desc:'新郎が週1通う気さくで頼もしい東さんのトレーニング2回チケット。', img:'./7.png',  stock: 5 },
       { name:'shutter1989', desc:'結婚式の撮影をお願いしたエイコさんのプロフ写真/家族写真撮影。記念の一枚を。', img:'./12.png', stock: 5 },
@@ -265,17 +303,36 @@
     }
     function saveState(){ localStorage.setItem('wedding2025Selections', JSON.stringify(state)); }
 
-    // --------- カード描画（在庫＆リボン表示つき） ---------
+    // --------- カード描画（在庫・リボン・ブランド強調） ---------
     function makeCard(item, index){
       const soldout = (item.stock ?? 0) <= 0;
-      const isRibbon = item.name.includes('パーソナルジムREV') || item.name.includes('shutter1989');
+
+      // ★ 目立たせる対象の判定（REV / shutter1989 / ゴルフ）
+      let tag = null;
+      if (item.name.includes('パーソナルジムREV')) tag = 'rev';
+      else if (item.name.includes('shutter1989')) tag = 'shutter';
+      else if (item.name.includes('ユニバーサルゴルフラウンジ')) tag = 'golf';
+
+      // 在庫の信号色
+      let levelClass = 'green';
+      if (!soldout && item.stock <= 4) levelClass = 'orange';
+      if (!soldout && item.stock <= 2) levelClass = 'red';
+      if (soldout) levelClass = 'gray';
+
+      // 3商品はブランド塗り＋残1-2でpulse
+      const brandClass = tag ? `brand ${tag}` : '';
+      const pulseClass = (!soldout && tag && item.stock <= 2) ? 'pulse' : '';
+
       const el = document.createElement('article');
-      el.className = 'card' + (soldout ? ' soldout' : '');
+      el.className = 'card' + (soldout ? ' soldout' : '') + (tag ? ` accent-${tag}` : '');
+
       el.innerHTML = `
         <div class="imgwrap">
           <img src="${item.img}" alt="${item.name}" loading="lazy" decoding="async">
-          <div class="stock-badge">${soldout ? '受付終了' : `残数 ${item.stock}`}</div>
-          ${isRibbon ? '<div class="ribbon">イチオシ</div>' : ''}
+          <div class="stock-badge ${levelClass} ${brandClass} ${pulseClass}">
+            ${soldout ? '受付終了' : `残数 ${item.stock}`}
+          </div>
+          ${tag ? '<div class="ribbon">イチオシ</div>' : ''}
         </div>
         <div class="card-body">
           <div class="card-head">
