@@ -84,6 +84,18 @@
       padding: 4px 8px; border-radius: 999px;
       font-size: 12px; color:#5e554e; backdrop-filter: blur(4px);
     }
+
+    /* ★イチオシリボン（REV / shutter1989に表示） */
+    .ribbon{
+      position:absolute; right:-36px; top:12px;
+      transform: rotate(45deg);
+      background:#e15b2a; color:#fff; font-weight:700;
+      padding:6px 40px; font-size:12px; letter-spacing:.1em;
+      box-shadow: var(--shadow);
+      pointer-events:none;
+      user-select:none;
+    }
+
     /* 売り切れの見た目とボタン無効化 */
     .card.soldout .imgwrap::after{
       content:"受付終了";
@@ -192,7 +204,7 @@
     </div>
   </div>
 
-  <!-- 申込みモーダル（divベースでiOS対応） -->
+  <!-- 申込みモーダル -->
   <div id="applyModal" class="modal" aria-hidden="true">
     <div id="modalBackdrop" class="modal__backdrop"></div>
     <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="applyTitle">
@@ -213,21 +225,21 @@
   </div>
 
   <script>
-    // --------- 商品データ（残数は手動更新：stock） ---------
+    // --------- 商品データ（先頭：REV、2番目：shutter1989） ---------
     const ITEMS = [
-     { name:'shutter1989', desc:'結婚式の撮影をお願いしたエイコさんのプロフ写真/家族写真撮影。記念の一枚を。', img:'./12.png', stock: 5 },
       { name:'パーソナルジムREV', desc:'新郎が週1通う気さくで頼もしい東さんのトレーニング2回チケット。', img:'./7.png',  stock: 5 },
+      { name:'shutter1989', desc:'結婚式の撮影をお願いしたエイコさんのプロフ写真/家族写真撮影。記念の一枚を。', img:'./12.png', stock: 5 },
       { name:'POLA Juair-Amor', desc:'新郎新婦の通うゴッドハンド真衣さんのオイルマッサージ。', img:'./8.png',  stock: 1 },
       { name:'ユニバーサルゴルフラウンジ', desc:'お世話になる長瀬さん会社で、プロによるマンツーマンレッスン。', img:'./9.png',  stock: 5 },
-      { name:'春あかり', desc:'二次会で総合司会をお願いした志津ママのお店（来春オープン）で使えるお食事券。', img:'./10.png', stock: 2 }, // 受付終了
+      { name:'春あかり', desc:'二次会で総合司会をお願いした志津ママのお店（来春オープン）で使えるお食事券。', img:'./10.png', stock: 2 },
       { name:"Lino'a", desc:'新郎新婦のヘアメイクをお願いした知佳さんによるカット＆癒しのヘッドスパ。', img:'./11.png',  stock: 2 },
- { name:'細野ファーム', desc:'新婦絶賛。自慢の甘いトマトを使った詰め合わせギフト。', img:'./6.png',  stock: 2 },
- { name:'TAKANASI flower decoration', desc:'KU-DETAのお花をお願いする八木さんの季節の花束／アレンジメント。', img:'./3.png',  stock: 6 },
-      { name:'酒のひろせ', desc:'KU-DETAのワインはひろせさん。食事に合わせて楽しめる一本。', img:'./4.png',  stock: 5 }, // 受付終了
+      { name:'細野ファーム', desc:'新婦絶賛。自慢の甘いトマトを使った詰め合わせギフト。', img:'./6.png',  stock: 2 },
+      { name:'TAKANASI flower decoration', desc:'KU-DETAのお花をお願いする八木さんの季節の花束／アレンジメント。', img:'./3.png',  stock: 6 },
+      { name:'酒のひろせ', desc:'KU-DETAのワインはひろせさん。食事に合わせて楽しめる一本。', img:'./4.png',  stock: 5 },
       { name:'Hygge Coffee', desc:'KU-DETAのコーヒーはここ！自家焙煎コーヒー豆と焼き菓子のセット。', img:'./5.png',  stock: 6 },
-           { name:'白日', desc:'大切な日はここで。桑下さんの日本料理お取り寄せ。丁寧な出汁が沁みる名品。', img:'./1.png',  stock: 0 },
+      { name:'白日', desc:'大切な日はここで。桑下さんの日本料理お取り寄せ。丁寧な出汁が沁みる名品。', img:'./1.png',  stock: 0 },
       { name:'プルシック', desc:'大好きな所シェフの焼き菓子＆生菓子からセレクト。贈り物にも人気のスイーツ。', img:'./2.png',  stock: 3 },
-          ];
+    ];
 
     // --------- 要素 ---------
     const grid = document.getElementById('grid');
@@ -253,15 +265,17 @@
     }
     function saveState(){ localStorage.setItem('wedding2025Selections', JSON.stringify(state)); }
 
-    // --------- カード描画（在庫表示つき） ---------
+    // --------- カード描画（在庫＆リボン表示つき） ---------
     function makeCard(item, index){
       const soldout = (item.stock ?? 0) <= 0;
+      const isRibbon = item.name.includes('パーソナルジムREV') || item.name.includes('shutter1989');
       const el = document.createElement('article');
       el.className = 'card' + (soldout ? ' soldout' : '');
       el.innerHTML = `
         <div class="imgwrap">
           <img src="${item.img}" alt="${item.name}" loading="lazy" decoding="async">
           <div class="stock-badge">${soldout ? '受付終了' : `残数 ${item.stock}`}</div>
+          ${isRibbon ? '<div class="ribbon">イチオシ</div>' : ''}
         </div>
         <div class="card-body">
           <div class="card-head">
@@ -310,7 +324,7 @@
       updateSticky();
     }
 
-    // --------- モーダル制御（iOSでも確実） ---------
+    // --------- モーダル制御 ---------
     function lockScroll(lock){
       document.documentElement.style.overflow = lock ? 'hidden' : '';
       document.body.style.overflow = lock ? 'hidden' : '';
